@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Charmant Tan — Resume</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #f0e8d8;
+    --paper:   #ffffff;
+    --fg:      #1e1a14;
+    --fg-mid:  #4a4035;
+    --fg-muted:#8a7a68;
+    --accent:  #c9593a;
+    --border:  rgba(30,26,20,0.14);
+    --display: 'Plus Jakarta Sans', sans-serif;
+    --body:    'DM Sans', sans-serif;
+  }
+
+  html, body { background: var(--bg); color: var(--fg); font-family: var(--body); -webkit-font-smoothing: antialiased; }
+  body { padding: 40px 24px; }
+
+  /* PAGE — US Letter @ 96dpi = 816 × 1056 */
+  .page {
+    width: 816px;
+    min-height: 1056px;
+    margin: 0 auto;
+    background: var(--paper);
+    padding: 44px 60px 40px;
+    box-shadow: 0 24px 56px rgba(30,26,20,0.10), 0 4px 12px rgba(30,26,20,0.06);
+    position: relative;
+  }
+
+  /* HEADER */
+  header { border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 14px; display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: end; }
+  .name { font-family: var(--display); font-size: 36px; font-weight: 800; letter-spacing: -0.035em; line-height: 0.95; }
+  .name .accent { color: var(--accent); }
+  .role { margin-top: 6px; font-family: var(--display); font-weight: 500; color: var(--fg-mid); text-transform: uppercase; letter-spacing: 0.12em; font-size: 10.5px; }
+  .contact { font-size: 10.5px; line-height: 1.75; color: var(--fg-mid); text-align: right; }
+  .contact a { color: var(--fg-mid); text-decoration: none; }
+  .contact .label { color: var(--fg-muted); margin-right: 8px; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  /* SECTION */
+  section { margin-bottom: 8px; }
+  section:last-child { margin-bottom: 0; }
+  h2.section-label {
+    font-family: var(--display);
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 10px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  h2.section-label::before { content: ''; width: 22px; height: 1px; background: var(--accent); }
+
+  /* SUMMARY */
+  .summary { font-size: 11.5px; line-height: 1.5; color: var(--fg-mid); max-width: 680px; }
+  .summary strong { color: var(--fg); font-weight: 500; }
+
+  /* EXPERIENCE */
+  .exp-item { display: grid; grid-template-columns: 100px 1fr; gap: 22px; padding: 5px 0; border-bottom: 1px solid var(--border); }
+  .exp-item:last-child { border-bottom: none; padding-bottom: 2px; }
+  .exp-period { font-size: 10.5px; color: var(--fg-muted); letter-spacing: 0.04em; padding-top: 2px; }
+  h3.exp-company { font-family: var(--display); font-size: 15px; font-weight: 700; letter-spacing: -0.015em; margin: 0 0 4px; line-height: 1.1; }
+  .exp-role { font-size: 11px; color: var(--fg-muted); letter-spacing: 0.02em; margin-bottom: 7px; font-style: italic; }
+  .exp-desc { font-size: 11px; line-height: 1.45; color: var(--fg-mid); margin: 0; }
+  .exp-desc strong { color: var(--fg); font-weight: 500; }
+
+  /* SKILLS — inline category form */
+  .cap-group { margin-bottom: 5px; }
+  .cap-group:last-child { margin-bottom: 0; }
+  .cap-label { font-family: var(--display); font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 3px; }
+  .cap-items { font-size: 10.5px; line-height: 1.5; color: var(--fg-mid); }
+
+  /* BOTTOM BAND — Education / Capabilities / Accomplishments */
+  .bottom-band {
+    margin-top: 2px;
+    padding-top: 6px;
+    border-top: 2px solid var(--fg);
+    display: grid;
+    grid-template-columns: 1.05fr 1.1fr 1fr;
+    gap: 28px;
+  }
+  .bottom-band h2.section-label { margin-bottom: 10px; }
+  .edu-item { padding: 0 0 10px; margin-bottom: 10px; border-bottom: 1px solid var(--border); }
+  .edu-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .edu-degree { font-family: var(--display); font-size: 12px; font-weight: 700; letter-spacing: -0.01em; color: var(--fg); margin-bottom: 2px; line-height: 1.25; }
+  .edu-school { font-size: 10.5px; color: var(--fg-mid); line-height: 1.5; }
+  .edu-date { display: block; color: var(--fg-muted); font-size: 10px; letter-spacing: 0.04em; margin-top: 1px; }
+
+  .acc-list { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+  .acc-item { font-size: 10.5px; line-height: 1.4; color: var(--fg-mid); }
+  .acc-title { display: block; font-family: var(--display); font-weight: 600; color: var(--fg); letter-spacing: -0.005em; font-size: 11.5px; margin-bottom: 1px; }
+  .acc-meta { color: var(--fg-muted); font-size: 10px; letter-spacing: 0.04em; }
+  .acc-meta .acc-year { color: var(--accent); font-weight: 500; }
+
+  /* SELECTED WORK */
+  .work-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 28px; }
+  .work-item { font-size: 11.5px; line-height: 1.6; color: var(--fg-mid); display: grid; grid-template-columns: 14px 1fr; gap: 8px; }
+  .work-item::before { content: ''; display: block; width: 10px; height: 1px; background: var(--accent); margin-top: 9px; }
+  .work-item strong { color: var(--fg); font-weight: 600; font-family: var(--display); letter-spacing: -0.005em; }
+  .work-item span.metric { color: var(--accent); font-weight: 500; }
+
+  /* DOWNLOAD CTA — centered below the page, mirrors .resume-btn from index */
+  .download-cta-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 48px 24px 56px;
+  }
+  .download-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 36px;
+    background: transparent;
+    border: 1.5px solid var(--fg);
+    color: var(--fg);
+    font-family: var(--display);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background .25s, color .25s, transform .25s, border-color .25s;
+  }
+  .download-cta:hover {
+    background: var(--fg);
+    color: var(--bg);
+    transform: translateY(-2px);
+  }
+  .download-cta:hover .resume-icon { transform: translateY(-2px); }
+  .resume-icon { transition: transform .25s; }
+
+  /* BACK BUTTON — screen only, matches .btn-outline from index */
+  .back-fab {
+    position: fixed;
+    top: 28px;
+    left: 28px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--fg-mid);
+    font-family: var(--display);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: border-color .25s, color .25s, transform .25s;
+    z-index: 100;
+  }
+  .back-fab:hover {
+    border-color: var(--fg);
+    color: var(--fg);
+    transform: translateY(-2px);
+  }
+  .back-fab .back-arrow { transition: transform .25s; }
+  .back-fab:hover .back-arrow { transform: translateX(-3px); }
+  .back-fab svg { display: block; }
+
+  /* PRINT */
+  @page { size: letter; margin: 0; }
+  @media print {
+    html, body { background: var(--paper); }
+    body { padding: 0; }
+    .page { width: 100%; min-height: auto; box-shadow: none; padding: 0.45in 0.55in 0.4in; margin: 0; }
+    a { color: inherit; }
+    /* Hide floating buttons + download CTA when printing */
+    .download-fab, .back-fab, .download-cta-wrap { display: none !important; }
+    /* Force print of all background colors / fills so accent rules render */
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+  }
+</style>
+</head>
+<body>
+<a class="back-fab" href="../index.html" aria-label="Back to portfolio">
+  <svg class="back-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M19 12H5m0 0l6-6m-6 6l6 6"/></svg>
+  <span>Back</span>
+</a>
+<div class="page">
+
+  <header>
+    <div>
+      <h1 class="name">Charmant <span class="accent">Tan</span></h1>
+      <div class="role">Product Designer</div>
+    </div>
+    <div class="contact">
+      <div><span class="label">Email</span><a href="mailto:charmanttan@gmail.com?subject=General%20Inquiry">charmanttan@gmail.com</a></div>
+      <div><span class="label">Web</span><a href="https://charmanttan.com">charmanttan.com</a></div>
+      <div><span class="label">LinkedIn</span><a href="https://www.linkedin.com/in/shibui1988">linkedin.com/in/shibui1988</a></div>
+    </div>
+  </header>
+
+  <section>
+    <h2 class="section-label">Summary</h2>
+    <p class="summary">Product designer with deep experience turning ambiguous enterprise challenges into clear, human-centered digital experiences. Shipped product across consumer tech, enterprise SaaS, healthcare, energy, and financial services. Currently leading design for the AI &amp; Automation pillar of <strong>Meta CRM</strong>; previously owned Core Experiences for <strong>Meta Business Suite</strong> at a $1.4B revenue run-rate. Thrive at the intersection of strategy, research, and craft.</p>
+  </section>
+
+  <section>
+    <h2 class="section-label">Experience</h2>
+
+    <div class="exp-item">
+      <div class="exp-period">2024 — Present</div>
+      <div>
+        <h3 class="exp-company">Meta</h3>
+        <div class="exp-role">Senior Product Designer · Meta CRM</div>
+        <p class="exp-desc">Leading design for the <strong>AI &amp; Automation</strong> pillar of Meta CRM — shipping intelligent workflows that power Meta's global Sales teams. Drove a 75% gain in client-engagement logging efficiency and 83% more client video engagements via AI, alongside a 53% reduction in search task completion time.</p>
+      </div>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-period">2022 — 2024</div>
+      <div>
+        <h3 class="exp-company">Meta</h3>
+        <div class="exp-role">Product Designer · Meta Business Suite</div>
+        <p class="exp-desc">Owned the <strong>Core Experiences</strong> pillar for a platform serving <strong>37M+ monthly active businesses and 1.2M advertisers at a $1.4B revenue run-rate</strong> — designing the daily social and ads management surfaces SMBs rely on to grow. Redesigned MBS Home and drove a 40% lift in weekly active users; led the Ads Slider Calculator, which was adopted across additional Meta Ads surfaces; drove the cross-platform CoreX advertiser journey map used in leadership roadmapping.</p>
+      </div>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-period">2019 — 2022</div>
+      <div>
+        <h3 class="exp-company">Radical Design Co.</h3>
+        <div class="exp-role">Design Principal</div>
+        <p class="exp-desc">Led UX research, strategy, and conceptual design across high-profile clients — including <strong>Florida Power &amp; Light's</strong> economic-development tools (1,000+ daily users) and <strong>Texas Health's</strong> patient experiences (+22% satisfaction). Built out the UX team in parallel with client delivery.</p>
+      </div>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-period">2019 — 2020</div>
+      <div>
+        <h3 class="exp-company">Y Media Labs</h3>
+        <div class="exp-role">Senior Designer</div>
+        <p class="exp-desc">Drove service design for <strong>State Farm</strong> (Becky AI, Photo Capture Assistant, mobile app) and led the <strong>HCA Healthcare</strong> nurse-engagement mobile app to 85% user engagement. Partnered with Spirit Airlines, GameStop, and others.</p>
+      </div>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-period">2013 — 2018</div>
+      <div>
+        <h3 class="exp-company">Earlier Roles</h3>
+        <div class="exp-role">Rightpoint · Fjord / Accenture · IBM</div>
+        <p class="exp-desc">Grew my design career as <strong>Design Lead at Rightpoint</strong>, <strong>Senior Interaction Designer at Fjord / Accenture</strong>, and <strong>UX Designer at IBM</strong> — shipping work for Mitsubishi, RoundPoint Mortgage, FPL, Celebrity Cruises, Coca-Cola, T-Mobile, and IBM Cloud.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="bottom-band">
+    <div>
+      <h2 class="section-label">Education</h2>
+      <div class="edu-item">
+        <div class="edu-degree">M.S. Human-Computer Interaction</div>
+        <div class="edu-school">Georgia Institute of Technology<br>Atlanta, GA<span class="edu-date">May 2013</span></div>
+      </div>
+      <div class="edu-item">
+        <div class="edu-degree">B.S. Computational Media</div>
+        <div class="edu-school">Georgia Institute of Technology<br>Atlanta, GA<span class="edu-date">Dec 2010</span></div>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="section-label">Capabilities</h2>
+      <div class="cap-group">
+        <div class="cap-label">Design</div>
+        <div class="cap-items">UX &amp; Interaction Design, Visual &amp; UI, Design Systems, Prototyping, Information Architecture</div>
+      </div>
+      <div class="cap-group">
+        <div class="cap-label">Research &amp; Strategy</div>
+        <div class="cap-items">User Research, Stakeholder Facilitation, Service Design, Journey Mapping, Business Model Design</div>
+      </div>
+      <div class="cap-group">
+        <div class="cap-label">Craft &amp; Collaboration</div>
+        <div class="cap-items">Figma / FigJam, Cross-functional Leadership, Design Critique, Accessibility, Agile / Lean UX</div>
+      </div>
+      <div class="cap-group">
+        <div class="cap-label">Code &amp; AI</div>
+        <div class="cap-items">HTML / CSS / JS, Figma Make, Claude Design, AI-assisted Prototyping, Design Engineering</div>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="section-label">Accomplishments</h2>
+      <ul class="acc-list">
+        <li class="acc-item">
+          <span class="acc-title">Tree Map Mobile Manipulation</span>
+          <span class="acc-meta">Patent US20140351730 &middot; <span class="acc-year">2013</span></span>
+        </li>
+        <li class="acc-item">
+          <span class="acc-title">Exposing Fragment Identifiers</span>
+          <span class="acc-meta">Patent US20160078144 &middot; <span class="acc-year">2013</span></span>
+        </li>
+        <li class="acc-item">
+          <span class="acc-title">Confidential Route Monitoring</span>
+          <span class="acc-meta">Patent US11054266 &middot; <span class="acc-year">2013</span></span>
+        </li>
+        <li class="acc-item">
+          <span class="acc-title">Project Planner for Meta</span>
+          <span class="acc-meta">Hackathon — 1st Place &middot; <span class="acc-year">2022</span></span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+</div>
+
+<div class="download-cta-wrap">
+  <a class="download-cta" href="Charmant-Tan-Resume.pdf" download="Charmant-Tan-Resume.pdf" aria-label="Download resume as PDF">
+    <span>Download Resume</span>
+    <svg class="resume-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M12 4v14m0 0l-6-6m6 6l6-6"/></svg>
+  </a>
+</div>
+</body>
+</html>

@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>State Farm — Charmant Tan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f0e8d8;
+    --bg2: #e6dcc8;
+    --fg: #1e1a14;
+    --fg-muted: #8a7a68;
+    --accent: #c9593a;
+    --border: rgba(30,26,20,0.12);
+    --display: 'Plus Jakarta Sans', sans-serif;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-weight: 400; cursor: none; overflow-x: hidden; }
+
+  /* CURSOR */
+  #cursor { position:fixed; width:10px; height:10px; background:var(--fg); border-radius:50%; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); mix-blend-mode:difference; }
+  #cursor-ring { position:fixed; width:36px; height:36px; border:1px solid rgba(228,232,220,0.35); border-radius:50%; pointer-events:none; z-index:9998; transform:translate(-50%,-50%); transition:width 0.3s cubic-bezier(0.34,1.56,0.64,1), height 0.3s cubic-bezier(0.34,1.56,0.64,1), border-color 0.2s; }
+  body.hovering #cursor { width:5px; height:5px; background:var(--accent); }
+  body.hovering #cursor-ring { width:52px; height:52px; border-color:var(--accent); }
+
+  /* NAV */
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 28px 48px; transition: padding 0.4s, background 0.4s; }
+  nav.scrolled { padding: 18px 48px; background: rgba(240,232,216,0.94); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
+  .nav-logo { font-family: var(--display); font-size: 17px; font-weight: 800; color: var(--fg); text-decoration: none; letter-spacing: -0.01em; }
+  .nav-right { display:flex; align-items:center; gap:32px; }
+  .nav-back { font-size:13px; letter-spacing:0.07em; text-transform:uppercase; color:var(--fg-muted); text-decoration:none; transition:color 0.2s; display:flex; align-items:center; gap:8px; }
+  .nav-back:hover { color:var(--fg); }
+  .nav-index { font-size:13px; color:var(--fg-muted); font-variant-numeric:tabular-nums; }
+
+  /* HERO */
+  .cs-hero { height: 100vh; min-height: 700px; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 48px 80px; position: relative; overflow: hidden; }
+  .hero-parallax-bg { position: absolute; inset: -20%; will-change: transform; }
+  .hero-glow { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 40%, rgba(201,89,58,0.07) 0%, transparent 65%); }
+  .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, var(--bg) 30%, rgba(240,232,216,0.5) 70%, transparent 100%); }
+  .hero-content { position: relative; z-index: 2; }
+  .hero-eyebrow { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; display: flex; align-items: center; gap: 14px; opacity: 0; animation: fadeUp 0.7s 0.1s forwards; }
+  .hero-eyebrow::before { content:''; display:block; width:28px; height:1px; background:var(--accent); }
+  .cs-title { font-family: var(--display); font-size: clamp(64px, 10vw, 148px); font-weight: 800; line-height: 0.88; letter-spacing: -0.035em; margin-bottom: 40px; will-change: transform; opacity: 0; animation: fadeUp 0.8s 0.25s forwards; }
+  .hero-meta { display: flex; gap: 48px; opacity: 0; animation: fadeUp 0.7s 0.4s forwards; flex-wrap: wrap; }
+  .meta-item { display:flex; flex-direction:column; gap:6px; }
+  .meta-label { font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--fg-muted); }
+  .meta-value { font-size:15px; font-weight:500; color:var(--fg); }
+  .hero-scroll-hint { position: absolute; right: 48px; bottom: 80px; z-index:2; display:flex; flex-direction:column; align-items:center; gap:10px; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--fg-muted); opacity: 0; animation: fadeUp 0.7s 0.6s forwards; }
+  .scroll-bar { width:1px; height:56px; background:linear-gradient(to bottom, var(--accent), transparent); animation:scrollPulse 2s ease-in-out infinite; }
+  @keyframes scrollPulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+
+  /* SECTION COMMONS */
+  .cs-section { position: relative; }
+  .section-num { font-family: var(--display); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+  .section-num::before { content:''; display:block; width:24px; height:1px; background:var(--accent); }
+
+  /* PROBLEM */
+  .problem-section { padding: 160px 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; border-top: 1px solid var(--border); }
+  .problem-left { position: sticky; top: 30vh; align-self: start; }
+  .problem-statement { font-family: var(--display); font-size: clamp(36px, 4.5vw, 60px); font-weight: 700; line-height: 1.05; letter-spacing: -0.025em; margin-bottom: 32px; }
+  .problem-statement span { color: var(--accent); }
+  .problem-body { font-size: 16px; line-height: 1.8; color: var(--fg-muted); max-width: 440px; }
+  .problem-right { display:flex; flex-direction:column; gap:24px; padding: 80px 0; }
+
+  .insight-card { background: var(--bg2); border: 1px solid var(--border); padding: 36px; position: relative; overflow: hidden; transition: border-color 0.3s; }
+  .insight-card:hover { border-color: rgba(138,172,120,0.3); }
+  .insight-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(to right, var(--accent), transparent); opacity:0; transition:opacity 0.3s; }
+  .insight-card:hover::before { opacity:1; }
+  .insight-num { font-family:var(--display); font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); margin-bottom:12px; }
+  .insight-text { font-size:15px; line-height:1.65; color:var(--fg-muted); }
+  .insight-text strong { color:var(--fg); font-weight:500; }
+
+  /* PROJECT SECTION */
+  .screens-section { padding: 96px 0; border-top: 1px solid var(--border); }
+  .screens-header { padding: 0 48px; margin-bottom: 80px; max-width: 880px; }
+  .screens-header h2 { font-family: var(--display); font-size: clamp(36px, 4vw, 56px); font-weight: 800; letter-spacing: -0.025em; margin-top: 16px; }
+  .screens-intro { margin-top: 28px; font-size: 17px; line-height: 1.7; color: var(--fg-muted); max-width: 720px; }
+
+  .screen-num { font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); margin-bottom:20px; }
+  .screen-title { font-family:var(--display); font-size:clamp(28px,3vw,44px); font-weight:700; letter-spacing:-0.02em; margin-bottom:20px; line-height:1.05; }
+  .screen-desc { font-size:15px; line-height:1.75; color:var(--fg-muted); max-width:340px; }
+
+  /* RESEARCH STATS */
+  .research-stats { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin: 0 0 80px; }
+  .research-stat { padding: 56px 36px; border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px; }
+  .research-stat:last-child { border-right: none; }
+  .rs-num { font-family: var(--display); font-size: clamp(40px, 5vw, 68px); font-weight: 800; letter-spacing: -0.03em; color: var(--accent); line-height: 1; }
+  .rs-label { font-size: 13px; letter-spacing: 0.06em; color: var(--fg-muted); line-height: 1.45; }
+
+  /* CAROUSEL */
+  .screens-carousel { position: relative; overflow: hidden; }
+  .carousel-track { display: flex; transition: transform .7s cubic-bezier(.4,0,.2,1); will-change: transform; }
+  .carousel-slide { flex: 0 0 100%; display: flex; flex-direction: column; background: var(--bg2); padding: 56px 48px 64px; gap: 32px; min-height: 640px; }
+  .slide-caption { max-width: 720px; }
+  .slide-caption .screen-num { margin-bottom: 12px; }
+  .slide-caption .screen-title { margin-bottom: 12px; }
+  .slide-caption .screen-desc { max-width: 640px; }
+  .slide-visual { flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; min-height: 360px; }
+  .slide-visual img { width: 100%; height: auto; max-height: 560px; object-fit: contain; filter: drop-shadow(0 24px 48px rgba(30,26,20,0.18)); }
+  .carousel-controls { display: flex; align-items: center; justify-content: space-between; padding: 36px 48px 0; gap: 32px; }
+  .carousel-count { font-family: var(--display); font-size: 14px; letter-spacing: 0.08em; color: var(--fg); font-variant-numeric: tabular-nums; }
+  .carousel-count .total { color: var(--fg-muted); }
+  .carousel-dots { display: flex; gap: 10px; }
+  .carousel-dot { width: 32px; height: 2px; background: var(--border); border: none; padding: 0; cursor: pointer; transition: background .25s, width .35s; position: relative; }
+  .carousel-dot::after { content:''; position:absolute; inset:-12px 0; }
+  .carousel-dot.active { background: var(--accent); width: 64px; }
+  .carousel-buttons { display: flex; gap: 8px; }
+  .carousel-btn { width: 52px; height: 52px; background: transparent; border: 1px solid var(--border); color: var(--fg); cursor: pointer; font-size: 18px; display: inline-flex; align-items: center; justify-content: center; transition: border-color .25s, color .25s, background .25s, transform .25s; }
+  .carousel-btn:hover:not(:disabled) { border-color: var(--fg); background: var(--fg); color: var(--bg); }
+  .carousel-btn:disabled { opacity: .3; cursor: not-allowed; }
+
+  /* IMPACT */
+  .impact-section { padding: 140px 48px 80px; border-top: 1px solid var(--border); text-align: center; }
+  .impact-heading { font-family: var(--display); font-size: clamp(40px, 5vw, 72px); font-weight: 800; letter-spacing: -0.025em; margin-bottom: 64px; line-height: 1.0; }
+  .impact-heading span { color: var(--accent); }
+  .impact-stats { display: flex; justify-content: center; gap: 80px; flex-wrap: wrap; margin-bottom: 80px; }
+  .stat { display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .stat-num { font-family: var(--display); font-size: clamp(48px,7vw,96px); font-weight: 800; letter-spacing: -0.04em; color: var(--accent); line-height:1; }
+  .stat-label { font-size:13px; letter-spacing:0.1em; text-transform:uppercase; color:var(--fg-muted); max-width: 220px; }
+
+  .impact-visual { max-width: 1200px; margin: 0 auto; }
+  .impact-visual img { width: 100%; height: auto; }
+
+  /* NEXT */
+  .next-section { border-top: 1px solid var(--border); padding: 0; }
+  .next-card { display: flex; align-items: center; justify-content: space-between; padding: 80px 48px; cursor: none; transition: background 0.4s; text-decoration: none; color: inherit; position: relative; overflow: hidden; }
+  .next-card::after { content:''; position:absolute; inset:0; background: rgba(138,172,120,0.03); opacity:0; transition:opacity 0.4s; }
+  .next-card:hover::after { opacity:1; }
+  .next-pre { font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:var(--fg-muted); margin-bottom:12px; }
+  .next-title { font-family:var(--display); font-size:clamp(36px,5vw,72px); font-weight:800; letter-spacing:-0.025em; }
+  .next-arrow { font-size:64px; color:var(--fg-muted); transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), color 0.3s; }
+  .next-card:hover .next-arrow { transform: translate(12px,-12px); color:var(--accent); }
+
+  /* LIGHTBOX */
+  .lightbox {
+    position: fixed; inset: 0;
+    background: rgba(15, 12, 8, 0.92);
+    backdrop-filter: blur(8px);
+    z-index: 10000;
+    display: flex; align-items: center; justify-content: center;
+    padding: 48px;
+    opacity: 0; pointer-events: none;
+    transition: opacity .35s cubic-bezier(.4,0,.2,1);
+    cursor: zoom-out;
+  }
+  .lightbox.open { opacity: 1; pointer-events: all; }
+  .lightbox img {
+    max-width: 100%; max-height: 100%;
+    object-fit: contain;
+    transform: scale(.96);
+    transition: transform .4s cubic-bezier(.4,0,.2,1);
+    box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+  }
+  .lightbox.open img { transform: scale(1); }
+  .lightbox-close {
+    position: absolute; top: 28px; right: 28px;
+    width: 44px; height: 44px;
+    background: rgba(240,232,216,0.08);
+    border: 1px solid rgba(240,232,216,0.2);
+    color: #f0e8d8;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .25s, border-color .25s;
+  }
+  .lightbox-close:hover { background: rgba(240,232,216,0.15); border-color: rgba(240,232,216,0.4); }
+  .lightbox-caption {
+    position: absolute; bottom: 24px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(240,232,216,0.55);
+    text-align: center;
+    max-width: 80%;
+  }
+
+  .slide-visual img,
+  .impact-visual img,
+  .market-scan-visual img,
+  .screen-image,
+  .blueprint-visual img {
+    cursor: zoom-in;
+    transition: filter .3s, transform .3s;
+  }
+  .slide-visual img:hover,
+  .impact-visual img:hover,
+  .market-scan-visual img:hover,
+  .screen-image:hover,
+  .blueprint-visual img:hover {
+    filter: drop-shadow(0 28px 56px rgba(30,26,20,0.28));
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .problem-section { grid-template-columns: 1fr; padding: 96px 24px; gap: 48px; }
+    .problem-left { position: static; }
+    .problem-right { padding: 0; }
+    .research-stats { grid-template-columns: 1fr; }
+    .research-stat { border-right: none; border-bottom: 1px solid var(--border); }
+    .research-stat:last-child { border-bottom: none; }
+    .carousel-slide { padding: 40px 24px 48px; min-height: 520px; }
+    .carousel-controls { padding: 28px 24px 0; flex-wrap: wrap; gap: 16px; }
+    .impact-stats { gap: 48px; }
+    .screens-header { padding: 0 24px; }
+    .cs-hero { padding: 0 24px 64px; }
+    nav { padding: 20px 24px; }
+    nav.scrolled { padding: 14px 24px; }
+  }
+
+  /* REVEAL */
+  .reveal { opacity:0; transform:translateY(36px); transition:opacity 0.8s cubic-bezier(0.4,0,0.2,1), transform 0.8s cubic-bezier(0.4,0,0.2,1); }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+  .reveal-delay-1 { transition-delay:0.1s; }
+  .reveal-delay-2 { transition-delay:0.2s; }
+  .reveal-delay-3 { transition-delay:0.3s; }
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<nav id="nav">
+  <a href="../index.html" class="nav-logo">CT</a>
+  <div class="nav-right">
+    <a href="../index.html#work" class="nav-back">← All Work</a>
+    <span class="nav-index">04 / 05</span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="cs-hero">
+  <div class="hero-parallax-bg" id="heroBg" style="background:url('../uploads/pasted-1779130293789-0.png') center/cover no-repeat;">
+    <div class="hero-glow"></div>
+    <svg style="position:absolute;inset:0;width:100%;height:140%;opacity:0.04" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+      <defs><pattern id="hpat" x="0" y="0" width="64" height="64" patternUnits="userSpaceOnUse"><line x1="0" y1="64" x2="64" y2="0" stroke="#c9593a" stroke-width="1"/></pattern></defs>
+      <rect width="1440" height="900" fill="url(#hpat)"/>
+    </svg>
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Insurance · Service Design · Strategy</div>
+    <h1 class="cs-title">State<br>Farm</h1>
+    <div class="hero-meta">
+      <div class="meta-item"><span class="meta-label">Role</span><span class="meta-value">Design Lead</span></div>
+      <div class="meta-item"><span class="meta-label">Client</span><span class="meta-value">State Farm</span></div>
+      <div class="meta-item"><span class="meta-label">Year</span><span class="meta-value">2018–2019</span></div>
+      <div class="meta-item"><span class="meta-label">Scope</span><span class="meta-value">Research, Strategy &amp; Service Design</span></div>
+    </div>
+  </div>
+  <div class="hero-scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-bar"></div>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<section class="problem-section cs-section">
+  <div class="problem-left">
+    <div class="section-num reveal">01 — Problem</div>
+    <h2 class="problem-statement reveal reveal-delay-1">
+      Shifting the mindset from selling <span>products</span> to offering services
+    </h2>
+    <p class="problem-body reveal reveal-delay-2">
+      Insurtech disruptors like Lemonade were rewriting what customers expected from their carrier. State Farm needed to shift from selling products to offering self-services people could control from their phone. As Design Lead, I drove research and strategy for AI-assisted claims handling with the <em>Becky</em> system.
+    </p>
+  </div>
+  <div class="problem-right">
+    <div class="insight-card reveal">
+      <div class="insight-num">Industry Signal 01</div>
+      <p class="insight-text">Insurtech disruptors like <strong>Lemonade</strong> were resetting expectations — instant claims, full transparency, all in-app.</p>
+    </div>
+    <div class="insight-card reveal reveal-delay-1">
+      <div class="insight-num">Industry Signal 02</div>
+      <p class="insight-text">Agents spent <strong>hours guiding drivers</strong> through tedious filing — tasks ripe for AI automation.</p>
+    </div>
+    <div class="insight-card reveal reveal-delay-2">
+      <div class="insight-num">Industry Signal 03</div>
+      <p class="insight-text">Customers wanted to <strong>be informed, proactive, and in control</strong> — not on hold.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECT — CLAIMS HANDLING WITH BECKY AI -->
+<section class="screens-section cs-section">
+  <div class="screens-header">
+    <div class="section-num reveal">02 — Project</div>
+    <h2 class="reveal reveal-delay-1">Claims Handling with the Becky AI</h2>
+    <p class="screens-intro reveal reveal-delay-2">Filing a claim is tedious — and it overwhelms State Farm's call centers. The opportunity: use AI to automate the predictable while preserving a human touch where it counts. As Design Lead, I owned discovery, facilitated a future-vision workshop, and synthesized the work into a service blueprint that became the strategic roadmap.</p>
+  </div>
+
+  <div class="research-stats reveal">
+    <div class="research-stat">
+      <div class="rs-num">3</div>
+      <div class="rs-label">Phases — Discovery, Workshop, Blueprint</div>
+    </div>
+    <div class="research-stat">
+      <div class="rs-num">7+</div>
+      <div class="rs-label">Business units aligned</div>
+    </div>
+    <div class="research-stat">
+      <div class="rs-num">2 days</div>
+      <div class="rs-label">Future-vision workshop facilitated</div>
+    </div>
+  </div>
+
+  <div class="screens-carousel" id="stateFarmCarousel">
+    <div class="carousel-track">
+
+      <div class="carousel-slide">
+        <div class="slide-caption">
+          <div class="screen-num">Step 01 · Discovery</div>
+          <h3 class="screen-title">Listening at the Call Center</h3>
+          <p class="screen-desc">I shadowed call-center agents to see where systems failed them — and where Becky could help. The biggest insight: agents had built workarounds (notepad triage, phrase shortcuts) to compensate for fragmented tools. That's where automation could earn its keep.</p>
+        </div>
+        <div class="slide-visual">
+          <img src="../uploads/pasted-1779130206438-0.png" alt="State Farm call center agent at desks"/>
+        </div>
+      </div>
+
+      <div class="carousel-slide">
+        <div class="slide-caption">
+          <div class="screen-num">Step 02 · Future Workshop</div>
+          <h3 class="screen-title">Two days. Every stakeholder. One vision.</h3>
+          <p class="screen-desc">I facilitated a two-day workshop with stakeholders from across State Farm — running 9-Box, Brand Affinity, and Round Robins to vision the future of claims handling with Becky and live agents working in tandem. The first time many of them had been in the same room.</p>
+        </div>
+        <div class="slide-visual">
+          <img src="../uploads/pasted-1779130212156-0.png" alt="Workshop sessions: ideation walls, sticky-note synthesis, and stakeholder discussions"/>
+        </div>
+      </div>
+
+      <div class="carousel-slide">
+        <div class="slide-caption">
+          <div class="screen-num">Step 03 · Mapping the Experience</div>
+          <h3 class="screen-title">From workshop output to a working map</h3>
+          <p class="screen-desc">We mapped the future of claims handling end-to-end — not just the happy path, but every fork where Becky needed to hand off to a human. The focus scenario: COL-390, a single-car front-end collision.</p>
+        </div>
+        <div class="slide-visual">
+          <img src="../uploads/pasted-1779130216623-0.png" alt="Whiteboard mapping of the claims handling journey with swimlanes"/>
+        </div>
+      </div>
+
+      <div class="carousel-slide">
+        <div class="slide-caption">
+          <div class="screen-num">Step 04 · Service Blueprint</div>
+          <h3 class="screen-title">The deliverable — a strategic roadmap</h3>
+          <p class="screen-desc">The Service Blueprint mapped the COL-390 journey from both sides: what the customer sees, and what Becky sees. Swimlanes called out triage moments, agent handoffs, and adjacent services like Photo Capture Assistant — becoming the reference point for every product decision that followed.</p>
+        </div>
+        <div class="slide-visual">
+          <img src="../uploads/pasted-1779130222881-0.png" alt="Final Becky service blueprint with customer and AI swimlanes across the COL-390 scenario"/>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="carousel-controls">
+      <div class="carousel-count"><span class="slide-idx">01</span> <span class="total">/ 04</span></div>
+      <div class="carousel-dots">
+        <button class="carousel-dot active" data-i="0" aria-label="Slide 1"></button>
+        <button class="carousel-dot" data-i="1" aria-label="Slide 2"></button>
+        <button class="carousel-dot" data-i="2" aria-label="Slide 3"></button>
+        <button class="carousel-dot" data-i="3" aria-label="Slide 4"></button>
+      </div>
+      <div class="carousel-buttons">
+        <button class="carousel-btn carousel-prev" aria-label="Previous">←</button>
+        <button class="carousel-btn carousel-next" aria-label="Next">→</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT -->
+<section class="impact-section cs-section">
+  <div class="section-num reveal" style="justify-content:center">03 — Impact</div>
+  <h2 class="impact-heading reveal reveal-delay-1">Results that <span>shaped the product</span></h2>
+  <div class="impact-stats">
+    <div class="stat reveal">
+      <span class="stat-num">2.7m</span>
+      <span class="stat-label">App downloads since 2018</span>
+    </div>
+    <div class="stat reveal reveal-delay-1">
+      <span class="stat-num">140k</span>
+      <span class="stat-label">Customers assisted</span>
+    </div>
+    <div class="stat reveal reveal-delay-2">
+      <span class="stat-num">2020</span>
+      <span class="stat-label">Webby Award recipient</span>
+    </div>
+  </div>
+  <div class="impact-visual reveal reveal-delay-3">
+    <img src="../uploads/pasted-1779130228569-0.png" alt="State Farm mobile experiences delivered as part of the program"/>
+  </div>
+</section>
+
+<!-- NEXT PROJECT -->
+<section class="next-section">
+  <a href="texas-health.html" class="next-card">
+    <div>
+      <div class="next-pre">Next Project</div>
+      <div class="next-title">Texas Health</div>
+    </div>
+    <div class="next-arrow">→</div>
+  </a>
+</section>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image preview">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Close">✕</button>
+  <img id="lightboxImg" alt=""/>
+  <div class="lightbox-caption" id="lightboxCaption"></div>
+</div>
+
+<script>
+// LIGHTBOX
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightboxImg');
+const lightboxCaption = document.getElementById('lightboxCaption');
+const lightboxClose = document.getElementById('lightboxClose');
+
+function openLightbox(src, alt) {
+  lightboxImg.src = src;
+  lightboxImg.alt = alt || '';
+  lightboxCaption.textContent = alt || '';
+  lightbox.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  lightbox.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.querySelectorAll('.slide-visual img, .impact-visual img, .market-scan-visual img, .screen-image, .blueprint-visual img').forEach(img => {
+  img.addEventListener('click', () => openLightbox(img.src, img.alt));
+});
+lightbox.addEventListener('click', e => {
+  if (e.target === lightbox || e.target === lightboxImg) closeLightbox();
+});
+lightboxClose.addEventListener('click', closeLightbox);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+// CAROUSELS
+document.querySelectorAll('.screens-carousel').forEach(carousel => {
+  const track = carousel.querySelector('.carousel-track');
+  const slides = carousel.querySelectorAll('.carousel-slide');
+  const dots = carousel.querySelectorAll('.carousel-dot');
+  const idxEl = carousel.querySelector('.slide-idx');
+  const prev = carousel.querySelector('.carousel-prev');
+  const next = carousel.querySelector('.carousel-next');
+  let cur = 0;
+  const total = slides.length;
+
+  function go(i) {
+    cur = Math.max(0, Math.min(total - 1, i));
+    track.style.transform = `translateX(-${cur * 100}%)`;
+    dots.forEach((d, idx) => d.classList.toggle('active', idx === cur));
+    if (idxEl) idxEl.textContent = String(cur + 1).padStart(2, '0');
+    if (prev) prev.disabled = cur === 0;
+    if (next) next.disabled = cur === total - 1;
+  }
+  if (prev) prev.addEventListener('click', () => go(cur - 1));
+  if (next) next.addEventListener('click', () => go(cur + 1));
+  dots.forEach(d => d.addEventListener('click', () => go(+d.dataset.i)));
+
+  let inView = false;
+  new IntersectionObserver(es => es.forEach(e => inView = e.isIntersecting), { threshold: 0.3 }).observe(carousel);
+  document.addEventListener('keydown', e => {
+    if (!inView) return;
+    if (e.key === 'ArrowLeft') go(cur - 1);
+    if (e.key === 'ArrowRight') go(cur + 1);
+  });
+
+  let touchX = null;
+  track.addEventListener('touchstart', e => touchX = e.touches[0].clientX, { passive: true });
+  track.addEventListener('touchend', e => {
+    if (touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 50) go(cur + (dx < 0 ? 1 : -1));
+    touchX = null;
+  });
+
+  go(0);
+});
+
+// CURSOR
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx=-100,my=-100,rx=-100,ry=-100;
+document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+function animateCursor(){
+  cursor.style.left=mx+'px'; cursor.style.top=my+'px';
+  rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12;
+  ring.style.left=rx+'px'; ring.style.top=ry+'px';
+  requestAnimationFrame(animateCursor);
+}
+animateCursor();
+document.querySelectorAll('a,button,.next-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.body.classList.add('hovering'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('hovering'));
+});
+
+// NAV
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', ()=>{ nav.classList.toggle('scrolled', window.scrollY>60); }, {passive:true});
+
+// PARALLAX
+const heroBg = document.getElementById('heroBg');
+window.addEventListener('scroll', ()=>{
+  const y = window.scrollY;
+  if(heroBg) heroBg.style.transform = `translateY(${y*0.3}px)`;
+}, {passive:true});
+
+// REVEAL
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); observer.unobserve(e.target); }});
+},{threshold:0.1});
+reveals.forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>

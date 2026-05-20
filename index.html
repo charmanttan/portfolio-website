@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Charmant Tan — Product Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #f0e8d8;
+    --bg2:     #e6dcc8;
+    --fg:      #1e1a14;
+    --fg-mid:  #4a4035;
+    --fg-muted:#8a7a68;
+    --accent:  #c9593a;
+    --olive:   #7d8f6a;
+    --border:  rgba(30,26,20,0.12);
+    --display: 'Plus Jakarta Sans', sans-serif;
+    --body:    'DM Sans', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--fg); font-family: var(--body); font-weight: 400; cursor: none; overflow-x: hidden; }
+
+  /* CURSOR */
+  #cursor { position:fixed; width:8px; height:8px; background:var(--fg); border-radius:50%; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); transition:width .2s,height .2s,background .2s; }
+  #cursor-ring { position:fixed; width:32px; height:32px; border:1.5px solid rgba(30,26,20,0.3); border-radius:50%; pointer-events:none; z-index:9998; transform:translate(-50%,-50%); transition:width .3s cubic-bezier(.34,1.56,.64,1),height .3s cubic-bezier(.34,1.56,.64,1),border-color .2s; }
+  body.hovering #cursor { width:5px; height:5px; background:var(--accent); }
+  body.hovering #cursor-ring { width:48px; height:48px; border-color:var(--accent); }
+
+  /* NAV */
+  nav { position:fixed; top:0; left:0; right:0; z-index:200; display:flex; align-items:center; justify-content:space-between; padding:30px 48px; transition:padding .4s,background .4s,border-color .4s; border-bottom:1px solid transparent; }
+  nav.scrolled { padding:18px 48px; background:rgba(240,232,216,0.94); backdrop-filter:blur(16px); border-bottom-color:var(--border); }
+  .nav-logo { font-family:var(--display); font-size:17px; font-weight:800; letter-spacing:-.01em; color:var(--fg); text-decoration:none; }
+  .nav-links { display:flex; gap:36px; list-style:none; }
+  .nav-links a { font-size:13px; font-weight:400; letter-spacing:.07em; text-transform:uppercase; color:var(--fg-muted); text-decoration:none; transition:color .2s; position:relative; }
+  .nav-links a::after { content:''; position:absolute; bottom:-2px; left:0; right:100%; height:1px; background:var(--accent); transition:right .3s cubic-bezier(.4,0,.2,1); }
+  .nav-links a:hover { color:var(--fg); }
+  .nav-links a:hover::after { right:0; }
+
+  /* HERO */
+  #hero { min-height:100vh; display:flex; flex-direction:column; justify-content:flex-end; padding:0 48px 80px; position:relative; overflow:hidden; }
+  .hero-bg { position:absolute; inset:0; background:radial-gradient(ellipse at 65% 30%, rgba(201,89,58,0.07) 0%, transparent 60%), radial-gradient(ellipse at 10% 80%, rgba(125,143,106,0.05) 0%, transparent 50%); }
+  .hero-eyebrow { font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); margin-bottom:22px; display:flex; align-items:center; gap:14px; opacity:0; animation:fadeUp .7s .15s forwards; }
+  .hero-eyebrow::before { content:''; width:28px; height:1px; background:var(--accent); }
+  .hero-name { font-family:var(--display); font-size:clamp(72px,11vw,160px); font-weight:800; line-height:.88; letter-spacing:-0.04em; margin-bottom:36px; will-change:transform; opacity:0; animation:fadeUp .9s .3s forwards; }
+  .hero-name span { color:var(--accent); }
+  .hero-bottom { display:flex; align-items:flex-end; justify-content:space-between; opacity:0; animation:fadeUp .8s .5s forwards; }
+  .hero-tagline { max-width:420px; font-size:17px; line-height:1.7; color:var(--fg-mid); font-weight:300; }
+  .hero-available { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--fg-muted); margin-bottom:16px; }
+  .available-dot { width:7px; height:7px; border-radius:50%; background:#4a9e62; box-shadow:0 0 0 0 rgba(74,158,98,.4); animation:pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(74,158,98,.4)} 50%{box-shadow:0 0 0 6px rgba(74,158,98,0)} }
+  .hero-scroll { display:flex; flex-direction:column; align-items:center; gap:10px; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--fg-muted); }
+  .scroll-bar { width:1px; height:56px; background:linear-gradient(to bottom, var(--accent), transparent); animation:scrollP 2s ease-in-out infinite; }
+  @keyframes scrollP { 0%,100%{opacity:.3} 50%{opacity:1} }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+
+  /* MARQUEE */
+  .marquee-wrap { border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:14px 0; overflow:hidden; background:var(--fg); }
+  .marquee-track { display:flex; gap:56px; animation:marquee 22s linear infinite; white-space:nowrap; width:max-content; }
+  .marquee-item { font-family:var(--display); font-size:12px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--bg2); display:flex; align-items:center; gap:56px; }
+  .marquee-dot { width:4px; height:4px; border-radius:50%; background:var(--accent); }
+  @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+  /* SECTION SHARED */
+  section { padding:120px 48px; }
+  .section-label { font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); margin-bottom:64px; display:flex; align-items:center; gap:16px; }
+  .section-label::before { content:''; width:28px; height:1px; background:var(--accent); }
+
+  /* WORK */
+  #work { padding:120px 0 0; border-top:1px solid var(--border); }
+  #work .section-label { padding:0 48px; }
+  .work-heading { padding:0 48px; font-family:var(--display); font-size:clamp(40px,5vw,72px); font-weight:800; letter-spacing:-0.03em; line-height:1.0; margin-bottom:72px; }
+  .work-heading span { color:var(--accent); }
+  .projects-grid { display:flex; flex-direction:column; gap:0; }
+
+  .project-card { position:relative; overflow:hidden; height:500px; cursor:none; }
+  .project-bg { position:absolute; inset:0; transition:transform .7s cubic-bezier(.4,0,.2,1); }
+  .project-card:hover .project-bg { transform:scale(1.04); }
+  .project-overlay { position:absolute; inset:0; background:linear-gradient(135deg,rgba(30,26,20,0.82) 0%,rgba(30,26,20,0.28) 100%); transition:background .5s; }
+  .project-card:hover .project-overlay { background:linear-gradient(135deg,rgba(30,26,20,0.9) 0%,rgba(30,26,20,0.45) 100%); }
+  .project-content { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:flex-end; padding:56px 64px; }
+  .project-num { font-family:var(--display); font-size:11px; color:var(--accent); letter-spacing:.12em; text-transform:uppercase; margin-bottom:12px; transition:transform .4s cubic-bezier(.4,0,.2,1); }
+  .project-title { font-family:var(--display); font-size:clamp(36px,4vw,64px); font-weight:800; line-height:.95; letter-spacing:-0.03em; color:#f0e8d8; margin-bottom:16px; transition:transform .4s cubic-bezier(.4,0,.2,1); }
+  .project-sub { font-size:15px; color:rgba(240,232,216,0.7); max-width:480px; line-height:1.65; transform:translateY(18px); opacity:0; transition:transform .4s .05s cubic-bezier(.4,0,.2,1),opacity .4s .05s; }
+  .project-tags { display:flex; gap:10px; flex-wrap:wrap; margin-top:20px; transform:translateY(18px); opacity:0; transition:transform .4s .12s cubic-bezier(.4,0,.2,1),opacity .4s .12s; }
+  .tag { font-size:11px; letter-spacing:.08em; text-transform:uppercase; border:1px solid rgba(240,232,216,0.25); padding:5px 12px; color:rgba(240,232,216,0.6); }
+  .project-cta { margin-top:24px; display:inline-flex; align-items:center; gap:10px; font-family:var(--display); font-size:12px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); text-decoration:none; transform:translateY(18px); opacity:0; transition:transform .4s .18s cubic-bezier(.4,0,.2,1),opacity .4s .18s; }
+  .cta-arrow { transition:transform .3s; }
+  .project-item.in-view .project-sub,
+  .project-card.in-view .project-sub,
+  .project-card.in-view .project-tags,
+  .project-card.in-view .project-cta { transform:translateY(0); opacity:1; }
+  .project-card:hover .cta-arrow { transform:translateX(4px); }
+  .project-card:hover .project-num { transform:translateY(-4px); }
+  .project-card:hover .project-title { transform:translateY(-4px); }
+
+  /* ABOUT */
+  #about { border-top:1px solid var(--border); background:var(--bg2); padding:120px 48px; }
+  .about-grid { display:grid; grid-template-columns:1fr 450px; gap:64px; align-items:start; }
+  .about-heading { font-family:var(--display); font-size:clamp(40px,5vw,68px); font-weight:800; line-height:.95; letter-spacing:-0.03em; margin-bottom:40px; }
+  .about-heading span { color:var(--accent); }
+  .about-body { font-size:16px; line-height:1.8; color:var(--fg-mid); margin-bottom:20px; }
+  .about-body strong { color:var(--fg); font-weight:500; }
+  .about-photo { width:100%; aspect-ratio:3/4; overflow:hidden; border:1px solid var(--border); flex-shrink:0; }
+  .about-photo img { width:100%; height:100%; object-fit:cover; object-position:center top; display:block; }
+
+  /* PROCESS */
+  #process { border-top:1px solid var(--border); }
+  .process-heading { font-family:var(--display); font-size:clamp(40px,5vw,68px); font-weight:800; line-height:.95; letter-spacing:-0.03em; margin-bottom:80px; max-width:600px; }
+  .process-heading span { color:var(--accent); }
+  .process-steps { display:grid; grid-template-columns:repeat(4,1fr); gap:2px; }
+  .process-step { background:var(--bg2); padding:48px 36px; border:1px solid var(--border); transition:background .3s; }
+  .process-step:hover { background:#ddd4bc; }
+  .step-num { font-family:var(--display); font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); margin-bottom:24px; display:block; }
+  .step-title { font-family:var(--display); font-size:22px; font-weight:700; letter-spacing:-.01em; margin-bottom:14px; line-height:1.15; }
+  .step-body { font-size:14px; line-height:1.7; color:var(--fg-mid); }
+
+  /* SKILLS */
+  #skills { border-top:1px solid var(--border); background:var(--bg2); }
+  .skills-heading { font-family:var(--display); font-size:clamp(40px,5vw,68px); font-weight:800; line-height:.95; letter-spacing:-0.03em; margin-bottom:80px; }
+  .skills-heading span { color:var(--accent); }
+  .skills-cols { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--border); }
+  .skill-col { padding:48px 40px; border-right:1px solid var(--border); }
+  .skill-col:last-child { border-right:none; }
+  .skill-col-label { font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin-bottom:24px; }
+  .skill-list { list-style:none; display:flex; flex-direction:column; gap:14px; }
+  .skill-list li { font-size:16px; color:var(--fg-mid); display:flex; align-items:center; gap:12px; }
+  .skill-list li::before { content:''; display:block; width:16px; height:1px; background:var(--border); flex-shrink:0; }
+
+  /* EXPERIENCE */
+  #experience { border-top:1px solid var(--border); }
+  .exp-heading { font-family:var(--display); font-size:clamp(40px,5vw,68px); font-weight:800; line-height:.95; letter-spacing:-0.03em; margin-bottom:80px; }
+  .exp-heading span { color:var(--accent); }
+  .exp-list { display:flex; flex-direction:column; }
+  .exp-item { display:grid; grid-template-columns:200px 1fr auto; gap:48px; padding:40px 0; border-top:1px solid var(--border); align-items:start; }
+  .exp-item:last-child { border-bottom:1px solid var(--border); }
+  .exp-period { font-size:13px; color:var(--fg-muted); padding-top:4px; }
+  .exp-company { font-family:var(--display); font-size:26px; font-weight:700; letter-spacing:-.02em; margin-bottom:6px; }
+  .exp-role { font-size:13px; color:var(--fg-muted); letter-spacing:.03em; margin-bottom:12px; }
+  .exp-desc { font-size:14px; line-height:1.75; color:var(--fg-mid); max-width:520px; }
+  .exp-arr { color:var(--fg-muted); font-size:18px; opacity:0; transition:opacity .2s,transform .2s; padding-top:4px; }
+  .exp-item:hover .exp-arr { opacity:1; transform:translate(3px,-3px); }
+
+  .resume-cta { margin-top:56px; display:flex; justify-content:center; }
+  .resume-btn {
+    display:inline-flex; align-items:center; gap:14px;
+    padding:18px 36px;
+    background:transparent;
+    border:1.5px solid var(--fg);
+    color:var(--fg);
+    font-family:var(--display); font-size:13px; font-weight:600;
+    letter-spacing:0.1em; text-transform:uppercase;
+    text-decoration:none;
+    cursor:none;
+    transition:background .25s, color .25s, transform .25s, border-color .25s;
+  }
+  .resume-btn:hover { background:var(--fg); color:var(--bg); transform:translateY(-2px); }
+  .resume-btn:hover .resume-icon { transform:translateY(-2px); }
+  .resume-icon { transition:transform .25s; }
+
+  /* CONTACT */
+  #contact { border-top:1px solid var(--border); padding:140px 48px; display:flex; flex-direction:column; align-items:center; text-align:center; background:var(--bg2); }
+  .contact-pre { display:flex; align-items:center; gap:14px; font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); margin-bottom:36px; }
+  .contact-pre::before,.contact-pre::after { content:''; width:28px; height:1px; background:var(--accent); }
+  .contact-heading { font-family:var(--display); font-size:clamp(56px,9vw,136px); font-weight:800; line-height:.88; letter-spacing:-0.04em; margin-bottom:40px; }
+  .contact-heading span { color:var(--accent); }
+  .contact-sub { font-size:17px; color:var(--fg-muted); margin-bottom:56px; font-weight:300; }
+  .contact-btns { display:flex; gap:16px; flex-wrap:wrap; justify-content:center; }
+  .btn-primary { display:inline-flex; align-items:center; gap:10px; background:var(--fg); color:var(--bg); padding:18px 40px; font-family:var(--display); font-size:13px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; text-decoration:none; cursor:none; transition:background .25s,transform .25s; }
+  .btn-primary:hover { background:var(--accent); transform:translateY(-2px); }
+  .btn-outline { display:inline-flex; align-items:center; gap:10px; border:1.5px solid var(--border); color:var(--fg-mid); padding:18px 40px; font-family:var(--display); font-size:13px; letter-spacing:.08em; text-transform:uppercase; text-decoration:none; cursor:none; transition:border-color .25s,color .25s,transform .25s; }
+  .btn-outline:hover { border-color:var(--fg); color:var(--fg); transform:translateY(-2px); }
+
+  /* FOOTER */
+  footer { padding:28px 48px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+  .footer-copy { font-size:13px; color:var(--fg-muted); }
+  .footer-links { display:flex; gap:32px; list-style:none; }
+  .footer-links a { font-size:13px; color:var(--fg-muted); text-decoration:none; transition:color .2s; }
+  .footer-links a:hover { color:var(--fg); }
+
+  /* HAMBURGER */
+  .nav-hamburger { display:none; flex-direction:column; justify-content:center; align-items:center; gap:6px; width:40px; height:40px; background:none; border:none; cursor:pointer; padding:0; z-index:200; position:relative; }
+  .nav-hamburger span { display:block; width:22px; height:1.5px; background:var(--fg); transition:transform .4s cubic-bezier(.4,0,.2,1), opacity .3s, top .4s cubic-bezier(.4,0,.2,1); transform-origin:center; position:relative; }
+  .nav-hamburger.open span:nth-child(1) { transform:translateY(7.5px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity:0; transform:scaleX(0); }
+  .nav-hamburger.open span:nth-child(3) { transform:translateY(-7.5px) rotate(-45deg); }
+
+  .mobile-menu { position:fixed; inset:0; background:var(--bg); z-index:150; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:40px; opacity:0; pointer-events:none; transition:opacity .35s cubic-bezier(.4,0,.2,1); }
+  .mobile-menu.open { opacity:1; pointer-events:all; }
+  .mobile-menu a { font-family:var(--display); font-size:clamp(32px,9vw,56px); font-weight:800; letter-spacing:-0.03em; color:var(--fg); text-decoration:none; transform:translateY(20px); opacity:0; transition:color .2s, transform .4s cubic-bezier(.4,0,.2,1), opacity .4s cubic-bezier(.4,0,.2,1); }
+  .mobile-menu.open a { transform:translateY(0); opacity:1; }
+  .mobile-menu.open a:nth-child(1) { transition-delay:.06s; }
+  .mobile-menu.open a:nth-child(2) { transition-delay:.12s; }
+  .mobile-menu.open a:nth-child(3) { transition-delay:.18s; }
+  .mobile-menu.open a:nth-child(4) { transition-delay:.24s; }
+  .mobile-menu.open a:nth-child(5) { transition-delay:.30s; }
+  .mobile-menu a:hover { color:var(--accent); }
+  .mobile-menu-footer { position:absolute; bottom:40px; font-size:13px; color:var(--fg-muted); letter-spacing:.06em; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .nav-links { display:none; }
+    .nav-hamburger { display:flex; }
+    nav { padding:24px 24px; }
+    nav.scrolled { padding:16px 24px; }
+
+    #hero { padding:0 24px 64px; }
+    .hero-bottom { flex-direction:column; align-items:flex-start; gap:32px; }
+    .hero-scroll { display:none; }
+
+    section { padding:80px 24px; }
+    #work { padding:80px 0 0; }
+    #work .section-label { padding:0 24px; }
+    .work-heading { padding:0 24px; margin-bottom:48px; }
+
+    .project-card { height:400px; }
+    .project-content { padding:32px 28px; }
+    .project-title { font-size:clamp(28px,8vw,48px); }
+
+    .about-grid { grid-template-columns:1fr; gap:48px; }
+    .about-photo { aspect-ratio:4/3; order:-1; }
+
+    .process-steps { grid-template-columns:1fr 1fr; }
+
+    .skills-cols { grid-template-columns:1fr; }
+    .skill-col { border-right:none; border-bottom:1px solid var(--border); }
+    .skill-col:last-child { border-bottom:none; }
+
+    .exp-item { grid-template-columns:1fr; gap:8px; }
+    .exp-period { font-size:12px; }
+    .exp-arr { display:none; }
+
+    #contact { padding:100px 24px; }
+    .contact-btns { flex-direction:column; align-items:stretch; }
+    .btn-primary, .btn-outline { justify-content:center; }
+
+    footer { flex-direction:column; gap:20px; align-items:flex-start; padding:24px; }
+    .footer-links { gap:24px; }
+  }
+
+  @media (max-width: 480px) {
+    .process-steps { grid-template-columns:1fr; }
+  }
+
+  /* REVEAL */
+  .reveal { opacity:0; transform:translateY(32px); transition:opacity .8s cubic-bezier(.4,0,.2,1),transform .8s cubic-bezier(.4,0,.2,1); }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+  .reveal-d1 { transition-delay:.1s; }
+  .reveal-d2 { transition-delay:.2s; }
+  .reveal-d3 { transition-delay:.3s; }
+  .reveal-d4 { transition-delay:.4s; }
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">CT</a>
+  <ul class="nav-links">
+    <li><a href="#work">Work</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#work"       class="mobile-nav-link">Work</a>
+  <a href="#about"      class="mobile-nav-link">About</a>
+  <a href="#experience" class="mobile-nav-link">Experience</a>
+  <a href="#contact"    class="mobile-nav-link">Contact</a>
+  <span class="mobile-menu-footer">Charmant Tan · Product Designer</span>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-eyebrow">Product Designer · Atlanta, GA</div>
+  <h1 class="hero-name">Charmant<br><span>Tan.</span></h1>
+  <div class="hero-bottom">
+    <div>
+      <p class="hero-tagline">Turning complex workflows into intuitive experiences that drive business growth.</p>
+    </div>
+    <div class="hero-scroll"><span>Scroll</span><div class="scroll-bar"></div></div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <div class="marquee-item">Product Design <span class="marquee-dot"></span></div>
+    <div class="marquee-item">UX Strategy <span class="marquee-dot"></span></div>
+    <div class="marquee-item">Enterprise SaaS <span class="marquee-dot"></span></div>
+    <div class="marquee-item">Design Systems <span class="marquee-dot"></span></div>
+    <div class="marquee-item">AI Design <span class="marquee-dot"></span></div>
+    <div class="marquee-item">Coding <span class="marquee-dot"></span></div>
+    <div class="marquee-item">Service Design <span class="marquee-dot"></span></div>
+    <div class="marquee-item">User Research <span class="marquee-dot"></span></div>
+    <div class="marquee-item">Product Design <span class="marquee-dot"></span></div>
+    <div class="marquee-item">UX Strategy <span class="marquee-dot"></span></div>
+    <div class="marquee-item">Enterprise SaaS <span class="marquee-dot"></span></div>
+    <div class="marquee-item">Design Systems <span class="marquee-dot"></span></div>
+    <div class="marquee-item">AI Design <span class="marquee-dot"></span></div>
+    <div class="marquee-item">Coding <span class="marquee-dot"></span></div>
+    <div class="marquee-item">Service Design <span class="marquee-dot"></span></div>
+    <div class="marquee-item">User Research <span class="marquee-dot"></span></div>
+  </div>
+</div>
+
+<!-- WORK -->
+<section id="work">
+  <div class="section-label reveal">Selected Work</div>
+  <h2 class="work-heading reveal reveal-d1">Case studies &amp; <span>impactful stories</span></h2>
+
+  <div class="projects-grid">
+
+    <div class="project-card reveal" id="pc1">
+      <div class="project-bg" style="background:url('images/crm.png') center/cover no-repeat;"></div>
+      <div class="project-overlay"></div>
+      <div class="project-content">
+        <div class="project-num">01</div>
+        <h3 class="project-title">Meta<br>Sales CRM</h3>
+        <p class="project-sub">SaaS platform powering Meta Sales teams across the world — redesigning workflows for scale and clarity.</p>
+        <div class="project-tags"><span class="tag">Enterprise SaaS</span><span class="tag">Product Design</span><span class="tag">AI Design</span></div>
+        <a href="case-studies/meta-crm.html" class="project-cta">View Case Study <span class="cta-arrow">→</span></a>
+      </div>
+    </div>
+
+    <div class="project-card reveal reveal-d1" id="pc2">
+      <div class="project-bg" style="background:url('images/mbs.png') center/cover no-repeat;"></div>
+      <div class="project-overlay"></div>
+      <div class="project-content">
+        <div class="project-num">02</div>
+        <h3 class="project-title">Meta<br>Business Suite</h3>
+        <p class="project-sub">Enabling small and medium businesses to professionally manage their marketing and advertising activities.</p>
+        <div class="project-tags"><span class="tag">SMB SaaS</span><span class="tag">Product Design</span><span class="tag">Design Systems</span></div>
+        <a href="case-studies/meta-mbs.html" class="project-cta">View Case Study <span class="cta-arrow">→</span></a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" id="pc3">
+      <div class="project-bg" style="background:url('uploads/pasted-1777089683255-0.png') center/cover no-repeat;">
+      </div>
+      <div class="project-overlay"></div>
+      <div class="project-content">
+        <div class="project-num">03</div>
+        <h3 class="project-title">Florida<br>Power &amp; Light</h3>
+        <p class="project-sub">Lead designer across multiple projects strengthening FPL's customer-facing digital experiences.</p>
+        <div class="project-tags"><span class="tag">Energy &amp; Utilities</span><span class="tag">Service Design</span><span class="tag">User Research</span></div>
+        <a href="case-studies/fpl.html" class="project-cta">View Case Study <span class="cta-arrow">→</span></a>
+      </div>
+    </div>
+
+    <div class="project-card reveal reveal-d1" id="pc4">
+      <div class="project-bg" style="background:url('uploads/pasted-1777089751643-0.png') center/cover no-repeat;">
+      </div>
+      <div class="project-overlay"></div>
+      <div class="project-content">
+        <div class="project-num">04</div>
+        <h3 class="project-title">State<br>Farm</h3>
+        <p class="project-sub">Research and strategy for rethinking their business model from selling products to offering services.</p>
+        <div class="project-tags"><span class="tag">Auto Insurance</span><span class="tag">Service Design</span><span class="tag">User Research</span></div>
+        <a href="case-studies/state-farm.html" class="project-cta">View Case Study <span class="cta-arrow">→</span></a>
+      </div>
+    </div>
+
+    <div class="project-card reveal" id="pc5">
+      <div class="project-bg" style="background:url('uploads/pasted-1779126088849-0.png') center/cover no-repeat;">
+      </div>
+      <div class="project-overlay"></div>
+      <div class="project-content">
+        <div class="project-num">05</div>
+        <h3 class="project-title">Texas<br>Health</h3>
+        <p class="project-sub">Delivering better customer, patient, and employee experiences across a complex healthcare ecosystem.</p>
+        <div class="project-tags"><span class="tag">Healthcare</span><span class="tag">Service Design</span><span class="tag">User Research</span></div>
+        <a href="case-studies/texas-health.html" class="project-cta">View Case Study <span class="cta-arrow">→</span></a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-label reveal">About</div>
+  <div class="about-grid">
+    <div>
+      <h2 class="about-heading reveal">Designing for <span>humans</span> in complex systems</h2>
+      <p class="about-body reveal reveal-d1">I'm a <strong>product designer</strong> with deep experience turning ambiguous enterprise challenges into clear, human-centered digital experiences. I've shipped product across consumer tech, enterprise SaaS, healthcare, energy, and financial services.</p>
+      <p class="about-body reveal reveal-d2">At <strong>Meta</strong>, I worked on SaaS tools used by sales teams worldwide — from internal CRMs to marketing platforms for small businesses. Before that, I drove research-led design transformations for clients including <strong>State Farm</strong>, <strong>Florida Power &amp; Light</strong>, and <strong>Texas Health</strong>.</p>
+      <p class="about-body reveal reveal-d3">I believe great design is less about aesthetics and more about <strong>clarity under constraints</strong> — and I thrive at the intersection of strategy, research, and craft.</p>
+    </div>
+    <div class="reveal reveal-d2">
+      <div class="about-photo"><img src="uploads/1629138834782.jpg" alt="Charmant Tan"></div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-label reveal">Career</div>
+  <h2 class="exp-heading reveal reveal-d1">Where I've <span>made an impact</span></h2>
+  <div class="exp-list">
+    <div class="exp-item reveal">
+      <div class="exp-period">2024 — Present</div>
+      <div><div class="exp-company">Meta</div><div class="exp-role">Senior Product Designer · Meta CRM</div><p class="exp-desc">Leading design for the AI &amp; Automation pillar of Meta CRM — shipping intelligent workflows that power Meta's global Sales teams. Drove a 75% gain in client-engagement logging efficiency and 83% more client video engagements via AI, alongside a 53% reduction in search task completion time.</p></div>
+      <div class="exp-arr">↗</div>
+    </div>
+    <div class="exp-item reveal">
+      <div class="exp-period">2022 — 2024</div>
+      <div><div class="exp-company">Meta</div><div class="exp-role">Product Designer · Meta Business Suite</div><p class="exp-desc">Owned the Core Experiences pillar for a platform serving 37M+ monthly active businesses and 1.2M advertisers at a $1.4B revenue run-rate — designing the daily social and ads management surfaces small and medium businesses rely on to grow.</p></div>
+      <div class="exp-arr">↗</div>
+    </div>
+    <div class="exp-item reveal">
+      <div class="exp-period">2019 — 2022</div>
+      <div><div class="exp-company">Radical Design Co.</div><div class="exp-role">Design Principal</div><p class="exp-desc">Led UX research, strategy, and conceptual design across high-profile clients — including Florida Power &amp; Light's economic development tools (1,000+ daily users) and Texas Health's patient experiences (+22% satisfaction). Built out the UX team alongside the work.</p></div>
+      <div class="exp-arr">↗</div>
+    </div>
+    <div class="exp-item reveal">
+      <div class="exp-period">2019 — 2020</div>
+      <div><div class="exp-company">Y Media Labs</div><div class="exp-role">Senior Designer</div><p class="exp-desc">Drove service design for State Farm (Becky AI, Photo Capture Assistant, mobile app) and led the HCA Healthcare nurse-engagement mobile app to 85% user engagement. Partnered with Spirit Airlines, GameStop, and others.</p></div>
+      <div class="exp-arr">↗</div>
+    </div>
+    <div class="exp-item reveal">
+      <div class="exp-period">2013 — 2018</div>
+      <div><div class="exp-company">Earlier Roles</div><div class="exp-role">Rightpoint · Fjord / Accenture · IBM</div><p class="exp-desc">Grew my design career as Design Lead at Rightpoint, Senior Interaction Designer at Fjord / Accenture, and UX Designer at IBM — shipping work for Mitsubishi, RoundPoint Mortgage, FPL, Celebrity Cruises, Coca-Cola, T-Mobile, and IBM Cloud.</p></div>
+      <div class="exp-arr">↗</div>
+    </div>
+  </div>
+
+  <div class="resume-cta reveal">
+    <a href="assets/resume.html" class="resume-btn">
+      <span>View Resume</span>
+    </a>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-label reveal">Capabilities</div>
+  <h2 class="skills-heading reveal reveal-d1">What I bring <span>to the table</span></h2>
+  <div class="skills-cols">
+    <div class="skill-col reveal"><div class="skill-col-label">Design</div><ul class="skill-list"><li>UX / Interaction Design</li><li>Visual &amp; UI Design</li><li>Design Systems</li><li>Prototyping</li><li>Information Architecture</li></ul></div>
+    <div class="skill-col reveal reveal-d1"><div class="skill-col-label">Research &amp; Strategy</div><ul class="skill-list"><li>User Research</li><li>Stakeholder Facilitation</li><li>Service Design</li><li>Journey Mapping</li><li>Business Model Design</li></ul></div>
+    <div class="skill-col reveal reveal-d2"><div class="skill-col-label">Craft &amp; Collaboration</div><ul class="skill-list"><li>Figma / FigJam</li><li>Cross-functional Leadership</li><li>Design Critique</li><li>Accessibility</li><li>Agile / Lean UX</li></ul></div>
+    <div class="skill-col reveal reveal-d3"><div class="skill-col-label">Code &amp; AI</div><ul class="skill-list"><li>HTML / CSS / JS</li><li>Figma Make</li><li>Claude Design</li><li>AI-assisted Prototyping</li><li>Design Engineering</li></ul></div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-pre">Let's work together</div>
+  <h2 class="contact-heading reveal">Got a <span>project?</span></h2>
+  <p class="contact-sub reveal reveal-d1">I'm selectively available for new engagements. Let's talk.</p>
+  <div class="contact-btns reveal reveal-d2">
+    <a href="mailto:charmanttan@gmail.com?subject=General%20Inquiry" class="btn-primary">Send an Email →</a>
+    <a href="https://www.linkedin.com/in/shibui1988" target="_blank" class="btn-outline">LinkedIn ↗</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-copy">© 2026 Charmant Tan. All rights reserved.</span>
+  <ul class="footer-links">
+    <li><a href="https://www.linkedin.com/in/shibui1988" target="_blank">LinkedIn</a></li>
+    <li><a href="assets/resume.html">Resume</a></li>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</footer>
+
+<script>
+  // HAMBURGER MENU
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  function toggleMenu(open) {
+    hamburger.classList.toggle('open', open);
+    mobileMenu.classList.toggle('open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+  hamburger.addEventListener('click', () => toggleMenu(!mobileMenu.classList.contains('open')));
+  document.querySelectorAll('.mobile-nav-link').forEach(a => {
+    a.addEventListener('click', () => toggleMenu(false));
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') toggleMenu(false); });
+
+  // CURSOR
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx=-100,my=-100,rx=-100,ry=-100;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+  (function tick(){cursor.style.left=mx+'px';cursor.style.top=my+'px';rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(tick);})();
+  document.querySelectorAll('a,button,.project-card').forEach(el=>{
+    el.addEventListener('mouseenter',()=>document.body.classList.add('hovering'));
+    el.addEventListener('mouseleave',()=>document.body.classList.remove('hovering'));
+  });
+
+  // NAV
+  window.addEventListener('scroll',()=>{ document.getElementById('nav').classList.toggle('scrolled',window.scrollY>60); },{passive:true});
+
+  // REVEAL
+  const obs = new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('visible');obs.unobserve(x.target);}}),{threshold:.1});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+  // PROJECT CARD SCROLL REVEAL
+  const cardObs = new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in-view');cardObs.unobserve(x.target);}}),{threshold:.35});
+  document.querySelectorAll('.project-card').forEach(el=>cardObs.observe(el));
+
+  // HERO PARALLAX
+  const heroName = document.querySelector('.hero-name');
+  window.addEventListener('scroll',()=>{
+    const y=window.scrollY;
+    if(heroName) heroName.style.transform=`translateY(${y*.18}px)`;
+  },{passive:true});
+</script>
+</body>
+</html>

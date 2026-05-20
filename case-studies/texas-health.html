@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Study — Charmant Tan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f0e8d8;
+    --bg2: #e6dcc8;
+    --fg: #1e1a14;
+    --fg-muted: #8a7a68;
+    --accent: #c9593a;
+    --border: rgba(30,26,20,0.12);
+    --display: 'Plus Jakarta Sans', sans-serif;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--sans);
+    font-weight: 400;
+    cursor: none;
+    overflow-x: hidden;
+  }
+
+  /* CURSOR */
+  #cursor { position:fixed; width:10px; height:10px; background:var(--fg); border-radius:50%; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); mix-blend-mode:difference; }
+  #cursor-ring { position:fixed; width:36px; height:36px; border:1px solid rgba(228,232,220,0.35); border-radius:50%; pointer-events:none; z-index:9998; transform:translate(-50%,-50%); transition:width 0.3s cubic-bezier(0.34,1.56,0.64,1), height 0.3s cubic-bezier(0.34,1.56,0.64,1), border-color 0.2s; }
+  body.hovering #cursor { width:5px; height:5px; background:var(--accent); }
+  body.hovering #cursor-ring { width:52px; height:52px; border-color:var(--accent); }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 28px 48px;
+    transition: padding 0.4s, background 0.4s;
+  }
+  nav.scrolled { padding: 18px 48px; background: rgba(240,232,216,0.94); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
+  .nav-logo { font-family: var(--display); font-size: 17px; font-weight: 800; color: var(--fg); text-decoration: none; letter-spacing: -0.01em; }
+  .nav-right { display:flex; align-items:center; gap:32px; }
+  .nav-back { font-size:13px; letter-spacing:0.07em; text-transform:uppercase; color:var(--fg-muted); text-decoration:none; transition:color 0.2s; display:flex; align-items:center; gap:8px; }
+  .nav-back:hover { color:var(--fg); }
+  .nav-index { font-size:13px; color:var(--fg-muted); font-variant-numeric:tabular-nums; }
+
+  /* ─── HERO ─── */
+  .cs-hero {
+    height: 100vh; min-height: 700px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 0 48px 80px;
+    position: relative; overflow: hidden;
+  }
+  .hero-parallax-bg {
+    position: absolute; inset: -20%; 
+    will-change: transform;
+  }
+  .hero-glow {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 40%, rgba(201,89,58,0.07) 0%, transparent 65%);
+  }
+  .hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, var(--bg) 30%, rgba(240,232,216,0.5) 70%, transparent 100%);
+  }
+  .hero-content { position: relative; z-index: 2; }
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 20px;
+    display: flex; align-items: center; gap: 14px;
+    opacity: 0; animation: fadeUp 0.7s 0.1s forwards;
+  }
+  .hero-eyebrow::before { content:''; display:block; width:28px; height:1px; background:var(--accent); }
+  .cs-title {
+    font-family: var(--display);
+    font-size: clamp(64px, 10vw, 148px);
+    font-weight: 800;
+    line-height: 0.88;
+    letter-spacing: -0.035em;
+    margin-bottom: 40px;
+    will-change: transform;
+    opacity: 0; animation: fadeUp 0.8s 0.25s forwards;
+  }
+  .hero-meta {
+    display: flex; gap: 48px;
+    opacity: 0; animation: fadeUp 0.7s 0.4s forwards;
+  }
+  .meta-item { display:flex; flex-direction:column; gap:6px; }
+  .meta-label { font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--fg-muted); }
+  .meta-value { font-size:15px; font-weight:500; color:var(--fg); }
+  .hero-scroll-hint {
+    position: absolute; right: 48px; bottom: 80px; z-index:2;
+    display:flex; flex-direction:column; align-items:center; gap:10px;
+    font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--fg-muted);
+    opacity: 0; animation: fadeUp 0.7s 0.6s forwards;
+  }
+  .scroll-bar { width:1px; height:56px; background:linear-gradient(to bottom, var(--accent), transparent); animation:scrollPulse 2s ease-in-out infinite; }
+  @keyframes scrollPulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ─── SECTION COMMONS ─── */
+  .cs-section { position: relative; }
+  .section-num {
+    font-family: var(--display);
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-num::before { content:''; display:block; width:24px; height:1px; background:var(--accent); }
+
+  /* ─── PROBLEM ─── */
+  .problem-section {
+    padding: 160px 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    border-top: 1px solid var(--border);
+  }
+  .problem-left { position: sticky; top: 30vh; align-self: start; }
+  .problem-statement {
+    font-family: var(--display);
+    font-size: clamp(36px, 4.5vw, 60px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    margin-bottom: 32px;
+  }
+  .problem-statement span { color: var(--accent); }
+  .problem-body { font-size: 16px; line-height: 1.8; color: var(--fg-muted); max-width: 440px; }
+  .problem-right { display:flex; flex-direction:column; gap:24px; padding: 80px 0; }
+
+  .insight-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 36px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .insight-card:hover { border-color: rgba(138,172,120,0.3); }
+  .insight-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background: linear-gradient(to right, var(--accent), transparent);
+    opacity:0; transition:opacity 0.3s;
+  }
+  .insight-card:hover::before { opacity:1; }
+  .insight-num { font-family:var(--display); font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); margin-bottom:12px; }
+  .insight-text { font-size:15px; line-height:1.65; color:var(--fg-muted); }
+  .insight-text strong { color:var(--fg); font-weight:500; }
+
+  /* ─── SOLUTION ─── */
+  .solution-section {
+    padding: 160px 48px;
+    border-top: 1px solid var(--border);
+  }
+  .solution-statement {
+    font-family: var(--display);
+    font-size: clamp(40px, 6vw, 88px);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    max-width: 900px;
+    margin-bottom: 56px;
+  }
+  .solution-statement em { font-style:normal; color:var(--accent); }
+  .solution-body {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
+    max-width: 800px;
+  }
+  .solution-body p { font-size:16px; line-height:1.8; color:var(--fg-muted); }
+
+  /* ─── DESIGN SCREENS ─── */
+  .screens-section {
+    padding: 96px 0;
+    border-top: 1px solid var(--border);
+  }
+  .screens-section + .screens-section { border-top: none; }
+  .screens-header { padding: 0 48px; margin-bottom: 80px; max-width: 880px; }
+  .screens-header h2 {
+    font-family: var(--display);
+    font-size: clamp(36px, 4vw, 56px);
+    font-weight: 800; letter-spacing: -0.025em;
+    margin-top: 16px;
+  }
+  .screens-intro {
+    margin-top: 28px;
+    font-size: 17px; line-height: 1.7;
+    color: var(--fg-muted);
+    max-width: 720px;
+  }
+
+  /* ─── RESEARCH MATRIX (Project 01) ─── */
+  .research-matrix {
+    margin: 0 0 64px;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .matrix-row-label {
+    background: rgba(201,89,58,0.06);
+    padding: 14px 36px;
+    font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 500;
+    border-top: 1px solid var(--border);
+  }
+  .matrix-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .matrix-cell {
+    padding: 40px 36px;
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .matrix-cell:last-child { border-right: none; }
+  .matrix-num {
+    font-family: var(--display);
+    font-size: clamp(32px, 4vw, 56px);
+    font-weight: 800; letter-spacing: -0.03em;
+    color: var(--accent); line-height: 1;
+  }
+  .matrix-num.muted { color: var(--fg-muted); opacity: 0.45; }
+  .matrix-label {
+    font-size: 13px; line-height: 1.45;
+    color: var(--fg-muted);
+  }
+  .matrix-col-head {
+    padding: 24px 36px 16px;
+    border-right: 1px solid var(--border);
+    font-family: var(--display);
+    font-size: 13px; font-weight: 600; letter-spacing: 0.04em;
+    color: var(--fg);
+  }
+  .matrix-col-head:last-child { border-right: none; }
+
+  /* ─── RESEARCH STATS (Project 02) ─── */
+  .research-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin: 0 0 80px;
+  }
+  .research-stat {
+    padding: 56px 36px;
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .research-stat:last-child { border-right: none; }
+  .rs-num {
+    font-family: var(--display);
+    font-size: clamp(40px, 5vw, 68px);
+    font-weight: 800; letter-spacing: -0.03em;
+    color: var(--accent); line-height: 1;
+  }
+  .rs-label {
+    font-size: 13px; letter-spacing: 0.06em;
+    color: var(--fg-muted);
+    line-height: 1.45;
+  }
+
+  /* ─── THEMES (Project 02) ─── */
+  .themes-block { padding: 0 48px 120px; }
+  .themes-eyebrow {
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 32px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .themes-eyebrow::before { content:''; display:block; width:28px; height:1px; background:var(--accent); }
+  .themes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+  .theme-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 48px 36px;
+    transition: background .3s, border-color .3s, transform .3s;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .theme-card:hover { background: #ddd4bc; transform: translateY(-2px); }
+  .theme-num {
+    font-family: var(--display);
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--accent);
+  }
+  .theme-title {
+    font-family: var(--display);
+    font-size: 22px; font-weight: 700; letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .theme-body {
+    font-size: 14px; line-height: 1.7; color: var(--fg-muted);
+  }
+
+  /* ─── BLUEPRINT DELIVERABLE ─── */
+  .blueprint-block {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 480px;
+    background: var(--bg2);
+  }
+  .blueprint-info {
+    padding: 80px 64px;
+    display: flex; flex-direction: column; justify-content: center;
+    gap: 20px;
+  }
+  .blueprint-info .screen-num { margin-bottom: 0; }
+  .blueprint-info .screen-title { margin-bottom: 0; }
+  .blueprint-info .screen-desc { max-width: 420px; }
+  .blueprint-visual {
+    background: #ddd4bc;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+  .blueprint-placeholder-text {
+    font-family: monospace;
+    font-size: 12px;
+    color: var(--fg-muted);
+    opacity: 0.6;
+    letter-spacing: 0.04em;
+  }
+
+  /* ─── MARKET SCAN ─── */
+  .market-scan-block {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 64px;
+    align-items: center;
+    padding: 0 48px 120px;
+  }
+  .market-scan-info {
+    display: flex; flex-direction: column; gap: 18px;
+  }
+  .market-scan-info .screen-num { margin-bottom: 0; }
+  .market-scan-info .screen-title { margin-bottom: 0; }
+  .market-scan-visual {
+    background: var(--bg2);
+    padding: 40px;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .market-scan-visual img {
+    width: 100%; height: auto;
+    max-height: 520px;
+    object-fit: contain;
+    filter: drop-shadow(0 18px 36px rgba(30,26,20,0.14));
+  }
+
+  .screen-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    min-height: 640px;
+    overflow: hidden;
+    margin-bottom: 4px;
+  }
+
+  /* ─── CAROUSEL ─── */
+  .screens-carousel { position: relative; overflow: hidden; }
+  .carousel-track {
+    display: flex;
+    transition: transform .7s cubic-bezier(.4,0,.2,1);
+    will-change: transform;
+  }
+  /* Carousel slide — unified layout for both projects */
+  .carousel-slide {
+    flex: 0 0 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg2);
+    padding: 56px 48px 64px;
+    gap: 32px;
+    min-height: 640px;
+  }
+  .slide-caption { max-width: 720px; }
+  .slide-caption .screen-num { margin-bottom: 12px; }
+  .slide-caption .screen-title { margin-bottom: 12px; }
+  .slide-caption .screen-desc { max-width: 640px; }
+  .slide-visual {
+    flex: 1;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    min-height: 360px;
+  }
+  .slide-visual img {
+    width: 100%; height: auto;
+    max-height: 560px;
+    object-fit: contain;
+    filter: drop-shadow(0 24px 48px rgba(30,26,20,0.18));
+  }
+  /* Concept variant — narrower image for device mockups */
+  .slide-visual.concept img { max-width: 880px; }
+  .carousel-controls {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 36px 48px 0;
+    gap: 32px;
+  }
+  .carousel-count {
+    font-family: var(--display);
+    font-size: 14px; letter-spacing: 0.08em;
+    color: var(--fg);
+    font-variant-numeric: tabular-nums;
+  }
+  .carousel-count .total { color: var(--fg-muted); }
+  .carousel-dots { display: flex; gap: 10px; }
+  .carousel-dot {
+    width: 32px; height: 2px;
+    background: var(--border);
+    border: none; padding: 0;
+    cursor: pointer;
+    transition: background .25s, width .35s;
+    position: relative;
+  }
+  .carousel-dot::after {
+    content:''; position:absolute; inset:-12px 0;
+  }
+  .carousel-dot.active { background: var(--accent); width: 64px; }
+  .carousel-buttons { display: flex; gap: 8px; }
+  .carousel-btn {
+    width: 52px; height: 52px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--fg);
+    cursor: pointer;
+    font-size: 18px;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: border-color .25s, color .25s, background .25s, transform .25s;
+  }
+  .carousel-btn:hover:not(:disabled) {
+    border-color: var(--fg);
+    background: var(--fg);
+    color: var(--bg);
+  }
+  .carousel-btn:disabled { opacity: .3; cursor: not-allowed; }
+
+  /* DEPRECATED — legacy journey-slide alias kept for backward compat */
+  .journey-slide { /* same as .carousel-slide — no overrides needed */ }
+
+  .screen-info {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 80px 64px;
+    background: var(--bg2);
+  }
+  .screen-num { font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); margin-bottom:20px; }
+  .screen-title { font-family:var(--display); font-size:clamp(28px,3vw,44px); font-weight:700; letter-spacing:-0.02em; margin-bottom:20px; line-height:1.05; }
+  .screen-desc { font-size:15px; line-height:1.75; color:var(--fg-muted); max-width:340px; }
+
+  .screen-visual {
+    position: relative; overflow: hidden;
+    background: var(--bg2);
+    min-height: 480px;
+  }
+  .screen-parallax {
+    position: absolute; inset: -10%;
+    display:flex; align-items:center; justify-content:center;
+    will-change: transform;
+  }
+  .screen-placeholder {
+    width: 90%; height: 85%;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap: 12px;
+  }
+  .placeholder-svg { width:100%; height:100%; }
+  .screen-image {
+    width: 92%; height: 88%;
+    object-fit: contain;
+    filter: drop-shadow(0 24px 48px rgba(30,26,20,0.18));
+  }
+
+  /* ─── IMPACT ─── */
+  .impact-section {
+    padding: 160px 48px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  .impact-heading {
+    font-family: var(--display);
+    font-size: clamp(40px, 5vw, 72px);
+    font-weight: 800; letter-spacing: -0.025em;
+    margin-bottom: 80px; line-height: 1.0;
+  }
+  .impact-heading span { color: var(--accent); }
+  .impact-stats {
+    display: flex; justify-content: center; gap: 80px; flex-wrap: wrap;
+  }
+  .stat { display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .stat-num {
+    font-family: var(--display);
+    font-size: clamp(48px,7vw,96px);
+    font-weight: 800; letter-spacing: -0.04em;
+    color: var(--accent); line-height:1;
+  }
+  .stat-label { font-size:13px; letter-spacing:0.1em; text-transform:uppercase; color:var(--fg-muted); }
+
+  /* ─── NEXT PROJECT ─── */
+  .next-section {
+    border-top: 1px solid var(--border);
+    padding: 0;
+  }
+  .next-card {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 80px 48px;
+    cursor: none;
+    transition: background 0.4s;
+    text-decoration: none; color: inherit;
+    position: relative; overflow: hidden;
+  }
+  .next-card::after {
+    content:''; position:absolute; inset:0;
+    background: rgba(138,172,120,0.03);
+    opacity:0; transition:opacity 0.4s;
+  }
+  .next-card:hover::after { opacity:1; }
+  .next-pre { font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:var(--fg-muted); margin-bottom:12px; }
+  .next-title { font-family:var(--display); font-size:clamp(36px,5vw,72px); font-weight:800; letter-spacing:-0.025em; }
+  .next-arrow {
+    font-size:64px; color:var(--fg-muted);
+    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), color 0.3s;
+  }
+  .next-card:hover .next-arrow { transform: translate(12px,-12px); color:var(--accent); }
+
+  @media (max-width: 900px) {
+    .research-stats { grid-template-columns: repeat(2, 1fr); }
+    .research-stat:nth-child(2) { border-right: none; }
+    .research-matrix .matrix-row { grid-template-columns: repeat(2, 1fr); }
+    .research-matrix .matrix-col-head:nth-child(2),
+    .research-matrix .matrix-cell:nth-child(2) { border-right: none; }
+    .themes-grid { grid-template-columns: 1fr; }
+    .blueprint-block { grid-template-columns: 1fr; min-height: auto; }
+    .blueprint-info { padding: 56px 32px; }
+    .blueprint-visual { min-height: 280px; }
+    .market-scan-block { grid-template-columns: 1fr; gap: 32px; padding: 0 24px 80px; }
+    .market-scan-visual { padding: 24px; }
+  }
+
+  /* REVEAL */
+  .reveal { opacity:0; transform:translateY(36px); transition:opacity 0.8s cubic-bezier(0.4,0,0.2,1), transform 0.8s cubic-bezier(0.4,0,0.2,1); }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+  .reveal-delay-1 { transition-delay:0.1s; }
+  .reveal-delay-2 { transition-delay:0.2s; }
+  .reveal-delay-3 { transition-delay:0.3s; }
+
+  /* LIGHTBOX */
+  .lightbox {
+    position: fixed; inset: 0;
+    background: rgba(15, 12, 8, 0.92);
+    backdrop-filter: blur(8px);
+    z-index: 10000;
+    display: flex; align-items: center; justify-content: center;
+    padding: 48px;
+    opacity: 0; pointer-events: none;
+    transition: opacity .35s cubic-bezier(.4,0,.2,1);
+    cursor: zoom-out;
+  }
+  .lightbox.open { opacity: 1; pointer-events: all; }
+  .lightbox img {
+    max-width: 100%; max-height: 100%;
+    object-fit: contain;
+    transform: scale(.96);
+    transition: transform .4s cubic-bezier(.4,0,.2,1);
+    box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+  }
+  .lightbox.open img { transform: scale(1); }
+  .lightbox-close {
+    position: absolute; top: 28px; right: 28px;
+    width: 44px; height: 44px;
+    background: rgba(240,232,216,0.08);
+    border: 1px solid rgba(240,232,216,0.2);
+    color: #f0e8d8;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .25s, border-color .25s;
+  }
+  .lightbox-close:hover { background: rgba(240,232,216,0.15); border-color: rgba(240,232,216,0.4); }
+  .lightbox-caption {
+    position: absolute; bottom: 24px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(240,232,216,0.55);
+    text-align: center;
+    max-width: 80%;
+  }
+
+  .slide-visual img,
+  .impact-visual img,
+  .market-scan-visual img,
+  .screen-image,
+  .blueprint-visual img {
+    cursor: zoom-in;
+    transition: filter .3s, transform .3s;
+  }
+  .slide-visual img:hover,
+  .impact-visual img:hover,
+  .market-scan-visual img:hover,
+  .screen-image:hover,
+  .blueprint-visual img:hover {
+    filter: drop-shadow(0 28px 56px rgba(30,26,20,0.28));
+  }
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<nav id="nav">
+  <a href="../index.html" class="nav-logo">CT</a>
+  <div class="nav-right">
+    <a href="../index.html#work" class="nav-back">← All Work</a>
+    <span class="nav-index" id="nav-index">01 / 05</span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="cs-hero">
+  <div class="hero-parallax-bg" id="heroBg" style="background:url('../uploads/pasted-1779126088849-0.png') center/cover no-repeat;">
+    <div class="hero-glow"></div>
+    <!-- Striped bg texture -->
+    <svg style="position:absolute;inset:0;width:100%;height:140%;opacity:0.04" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+      <defs><pattern id="hpat" x="0" y="0" width="64" height="64" patternUnits="userSpaceOnUse"><line x1="0" y1="64" x2="64" y2="0" stroke="#c9593a" stroke-width="1"/></pattern></defs>
+      <rect width="1440" height="900" fill="url(#hpat)"/>
+    </svg>
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow" id="heroEyebrow">Case Study</div>
+    <h1 class="cs-title" id="csTitle">Meta<br>Sales CRM</h1>
+    <div class="hero-meta">
+      <div class="meta-item"><span class="meta-label">Role</span><span class="meta-value" id="metaRole">Senior Product Designer</span></div>
+      <div class="meta-item"><span class="meta-label" id="metaClientLabel">Company</span><span class="meta-value" id="metaClient">Meta</span></div>
+      <div class="meta-item"><span class="meta-label">Year</span><span class="meta-value" id="metaYear">2023–2026</span></div>
+      <div class="meta-item"><span class="meta-label">Scope</span><span class="meta-value" id="metaScope">Enterprise SaaS</span></div>
+    </div>
+  </div>
+  <div class="hero-scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-bar"></div>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<section class="problem-section cs-section">
+  <div class="problem-left">
+    <div class="section-num reveal">01 — Problem</div>
+    <h2 class="problem-statement reveal reveal-delay-1" id="problemStatement">
+      Sales teams drowning in <span>fragmented</span> tooling
+    </h2>
+    <p class="problem-body reveal reveal-delay-2" id="problemBody">
+      Meta's global sales organization relied on a patchwork of legacy tools, spreadsheets, and workarounds to manage their pipeline. Context switching and data silos cost thousands of hours per quarter and introduced error into critical revenue processes.
+    </p>
+  </div>
+  <div class="problem-right">
+    <div class="insight-card reveal">
+      <div class="insight-num">Research Finding 01</div>
+      <p class="insight-text"><strong>73% of sales reps</strong> reported spending more than 2 hours daily on manual data entry — time that could be spent selling.</p>
+    </div>
+    <div class="insight-card reveal reveal-delay-1">
+      <div class="insight-num">Research Finding 02</div>
+      <p class="insight-text">Interviews across 5 global offices revealed <strong>11 distinct tool combinations</strong> for the same core workflow.</p>
+    </div>
+    <div class="insight-card reveal reveal-delay-2">
+      <div class="insight-num">Research Finding 03</div>
+      <p class="insight-text">Pipeline data inconsistency led to <strong>forecasting errors averaging 22%</strong>, undermining leadership confidence in sales data.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECT 01 — PATIENT REFERRAL NAVIGATION -->
+<section class="screens-section cs-section">
+  <div class="screens-header">
+    <div class="section-num reveal">02 — Project 01</div>
+    <h2 class="reveal reveal-delay-1">Patient Referral Navigation</h2>
+    <p class="screens-intro reveal reveal-delay-2">Texas Health was losing ~$4M annually as physicians referred patients outside the THPG network. I led 43 interviews and 17 observations across primary care physicians, navigators, and specialists — then synthesized findings into a journey map and five directional concepts that became the foundation for leadership's reform roadmap.</p>
+  </div>
+
+  <div class="research-matrix reveal" style="margin-bottom:80px;">
+    <div class="matrix-row">
+      <div class="matrix-col-head">THR Primary Care</div>
+      <div class="matrix-col-head">THPG Specialty Care</div>
+      <div class="matrix-col-head">THPG Patient</div>
+      <div class="matrix-col-head">SWHR</div>
+    </div>
+    <div class="matrix-row-label">Interviews</div>
+    <div class="matrix-row">
+      <div class="matrix-cell">
+        <div class="matrix-num">14</div>
+        <div class="matrix-label">Primary Care Clinics</div>
+      </div>
+      <div class="matrix-cell">
+        <div class="matrix-num">10</div>
+        <div class="matrix-label">Specialty Care Clinics</div>
+      </div>
+      <div class="matrix-cell">
+        <div class="matrix-num">6,000+</div>
+        <div class="matrix-label">Survey Responses</div>
+      </div>
+      <div class="matrix-cell">
+        <div class="matrix-num">15+</div>
+        <div class="matrix-label">SWHR Referral Navigators</div>
+      </div>
+    </div>
+    <div class="matrix-row-label">Observations</div>
+    <div class="matrix-row">
+      <div class="matrix-cell">
+        <div class="matrix-num">4 hrs</div>
+        <div class="matrix-label">of Primary Care Observations</div>
+      </div>
+      <div class="matrix-cell">
+        <div class="matrix-num">10+ hrs</div>
+        <div class="matrix-label">of Specialty Care Observations</div>
+      </div>
+      <div class="matrix-cell">
+        <div class="matrix-num muted">—</div>
+        <div class="matrix-label">N/A</div>
+      </div>
+      <div class="matrix-cell">
+        <div class="matrix-num">35+ hrs</div>
+        <div class="matrix-label">of SWHR Referral Navigation Observations</div>
+      </div>
+    </div>
+
+  <div class="screens-carousel" id="screensCarousel">
+    <div class="carousel-track" id="carouselTrack">
+
+      <div class="carousel-slide">
+        <div class="slide-caption">
+          <div class="screen-num">Directional Concept 01</div>
+          <h3 class="screen-title">Referral Status Tracker</h3>
+          <p class="screen-desc">A "pizza tracker" for healthcare. A visual referral status tool for providers and patients — surfacing where a referral stands and how long it's been there. Removes uncertainty and reduces calls to navigators.</p>
+        </div>
+        <div class="slide-visual concept">
+          <img src="../uploads/pasted-1779127038869-0.png" alt="Referral Status Tracker concept"/>
+        </div>
+      </div>
+
+      <div class="carousel-slide">
+        <div class="slide-caption">
+          <div class="screen-num">Directional Concept 02</div>
+          <h3 class="screen-title">Enhanced Reporting</h3>
+          <p class="screen-desc">Rich reporting for providers, navigation leadership, and network development directors — surfacing referral effectiveness, navigator efficiency, and provider-network utilization at a glance.</p>
+        </div>
+        <div class="slide-visual concept">
+          <img src="../uploads/pasted-1779127021503-0.png" alt="Enhanced Reporting concept"/>
+        </div>
+      </div>
+
+      <div class="carousel-slide">
+        <div class="slide-caption">
+          <div class="screen-num">Directional Concept 03</div>
+          <h3 class="screen-title">Navigator Dashboard</h3>
+          <p class="screen-desc">A single interface that helps navigators organize their day — highlights from key systems, work-queue triage, and contextual training nudges — so they can focus on patients, not tooling.</p>
+        </div>
+        <div class="slide-visual concept">
+          <img src="../uploads/pasted-1779127027918-0.png" alt="Navigator Dashboard concept"/>
+        </div>
+      </div>
+
+      <div class="carousel-slide">
+        <div class="slide-caption">
+          <div class="screen-num">Directional Concept 04</div>
+          <h3 class="screen-title">Training Hub</h3>
+          <p class="screen-desc">A consolidated home for navigator training — searchable playbook, bite-sized modules by category, ML-driven recommendations based on individual performance, and peer-to-peer knowledge sharing.</p>
+        </div>
+        <div class="slide-visual concept">
+          <img src="../uploads/pasted-1779127032851-0.png" alt="Training Hub concept"/>
+        </div>
+      </div>
+
+      <div class="carousel-slide">
+        <div class="slide-caption">
+          <div class="screen-num">Directional Concept 05</div>
+          <h3 class="screen-title">Network Development Dashboard</h3>
+          <p class="screen-desc">A multi-purpose dashboard for network directors — surfacing which providers are referring out-of-network, where the growth gaps are, and which specialty affiliates to pursue next.</p>
+        </div>
+        <div class="slide-visual concept">
+          <img src="../uploads/pasted-1779127044285-0.png" alt="Network Development Dashboard concept"/>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="carousel-controls">
+      <div class="carousel-count"><span id="slideIdx">01</span> <span class="total">/ 05</span></div>
+      <div class="carousel-dots" id="carouselDots">
+        <button class="carousel-dot active" data-i="0" aria-label="Slide 1"></button>
+        <button class="carousel-dot" data-i="1" aria-label="Slide 2"></button>
+        <button class="carousel-dot" data-i="2" aria-label="Slide 3"></button>
+        <button class="carousel-dot" data-i="3" aria-label="Slide 4"></button>
+        <button class="carousel-dot" data-i="4" aria-label="Slide 5"></button>
+      </div>
+      <div class="carousel-buttons">
+        <button class="carousel-btn" id="prevSlide" aria-label="Previous">←</button>
+        <button class="carousel-btn" id="nextSlide" aria-label="Next">→</button>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- PROJECT 02 — HEART & VASCULAR RESEARCH -->
+<section class="screens-section cs-section">
+  <div class="screens-header">
+    <div class="section-num reveal">03 — Project 02</div>
+    <h2 class="reveal reveal-delay-1">Heart &amp; Vascular Research</h2>
+    <p class="screens-intro reveal reveal-delay-2">In a crowded DFW Heart &amp; Vascular market, Texas Health wasn't being chosen by patients — they were being assigned. I led patient and physician research, plus a market scan of leading programs, to uncover where new services could differentiate the experience.</p>
+  </div>
+
+  <div class="research-stats reveal">
+    <div class="research-stat">
+      <div class="rs-num">7</div>
+      <div class="rs-label">Physician stakeholder interviews</div>
+    </div>
+    <div class="research-stat">
+      <div class="rs-num">15</div>
+      <div class="rs-label">Patient consumer interviews</div>
+    </div>
+    <div class="research-stat">
+      <div class="rs-num">15+</div>
+      <div class="rs-label">Industry innovations scanned</div>
+    </div>
+    <div class="research-stat">
+      <div class="rs-num">10+</div>
+      <div class="rs-label">Leading programs benchmarked</div>
+    </div>
+  </div>
+
+  <div class="market-scan-block reveal">
+    <div class="market-scan-info">
+      <div class="screen-num">Market Scan · Out in the Wild</div>
+      <h3 class="screen-title">Studying the leading edge</h3>
+      <p class="screen-desc">Beyond stakeholder interviews, I led a comparative analysis of 15+ innovations and 10+ leading programs in heart &amp; vascular care — from FDA-cleared platforms like Eko to value-based care models at Thomas Jefferson University Hospitals and HonorHealth. These benchmarks gave Texas Health a sharp picture of where their program could differentiate.</p>
+    </div>
+    <div class="market-scan-visual">
+      <img src="../uploads/pasted-1779129273648-0.png" alt="Out in the Wild market scan deliverable"/>
+    </div>
+  </div>
+
+  <div class="themes-block">
+    <div class="themes-eyebrow reveal">Key Themes</div>
+    <div class="themes-grid">
+      <div class="theme-card reveal">
+        <div class="theme-num">Theme 01</div>
+        <h4 class="theme-title">Personal Relationships Matter</h4>
+        <p class="theme-body">Patients who described the best experiences consistently pointed to feeling a personal connection with their care team — not just clinical competence.</p>
+      </div>
+      <div class="theme-card reveal reveal-delay-1">
+        <div class="theme-num">Theme 02</div>
+        <h4 class="theme-title">Volume = Expertise</h4>
+        <p class="theme-body">Patients believe the more procedures a facility performs, the more skilled the physicians become. Surfacing that signal builds patient trust.</p>
+      </div>
+      <div class="theme-card reveal reveal-delay-2">
+        <div class="theme-num">Theme 03</div>
+        <h4 class="theme-title">Location, Location, Location</h4>
+        <p class="theme-body">Patients with great Texas Health experiences will drive any distance to keep that relationship. Proximity matters less than perceived quality of care.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="screens-carousel" id="journeyCarousel">
+    <div class="carousel-track">
+
+      <div class="carousel-slide">
+        <div class="slide-caption">
+          <div class="screen-num">Step 01 · Synthesis</div>
+          <h3 class="screen-title">Research Synthesis in Miro</h3>
+          <p class="screen-desc">Starting from raw interview notes, I synthesized findings into three personas — Health Enthusiast, Natural Ager, Family History — across Daily Life, Clinical Engagement, and Life Enhancement. Each opportunity tagged to a strategic theme.</p>
+        </div>
+        <div class="slide-visual">
+          <img src="../uploads/pasted-1779129232209-0.png" alt="Sticky-note journey synthesis in Miro"/>
+        </div>
+      </div>
+
+      <div class="carousel-slide">
+        <div class="slide-caption">
+          <div class="screen-num">Step 02 · Visualization</div>
+          <h3 class="screen-title">Patient Journey Map</h3>
+          <p class="screen-desc">Working with a visual designer, I brought the sticky-note synthesis to life as a single end-to-end journey — Daily Life → Clinical Engagement → Life Enhancement — with three persona swimlanes running through every phase.</p>
+        </div>
+        <div class="slide-visual">
+          <img src="../uploads/pasted-1779129215122-0.png" alt="Final patient journey map"/>
+        </div>
+      </div>
+
+      <div class="carousel-slide">
+        <div class="slide-caption">
+          <div class="screen-num">Phase 01 · Daily Life</div>
+          <h3 class="screen-title">Pre-Awareness through Referral</h3>
+          <p class="screen-desc">Zooming into Daily Life: how each persona encounters early heart health signals — and the opportunities for data monitoring, self-service subscriptions, and added-care offerings before clinical intervention is needed.</p>
+        </div>
+        <div class="slide-visual">
+          <img src="../uploads/pasted-1779129220421-0.png" alt="Daily Life journey detail"/>
+        </div>
+      </div>
+
+      <div class="carousel-slide">
+        <div class="slide-caption">
+          <div class="screen-num">Phase 02 · Clinical Engagement</div>
+          <h3 class="screen-title">Consultation through Check-In</h3>
+          <p class="screen-desc">From cardiology consult to surgical prep, this phase surfaces opportunities for seamless data services, value-added pre-stay experiences, and connected patient records across every facility touchpoint.</p>
+        </div>
+        <div class="slide-visual">
+          <img src="../uploads/pasted-1779129224366-0.png" alt="Clinical Engagement journey detail"/>
+        </div>
+      </div>
+
+      <div class="carousel-slide">
+        <div class="slide-caption">
+          <div class="screen-num">Phase 03 · Life Enhancement</div>
+          <h3 class="screen-title">Post-Op through Follow-Ups</h3>
+          <p class="screen-desc">After surgery, opportunities span value-added recovery services, subscription-based meal and rehab support, connected patient communities, and ongoing monitoring services that keep Texas Health in the patient's life long after discharge.</p>
+        </div>
+        <div class="slide-visual">
+          <img src="../uploads/pasted-1779129228435-0.png" alt="Life Enhancement journey detail"/>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="carousel-controls">
+      <div class="carousel-count"><span class="slide-idx">01</span> <span class="total">/ 05</span></div>
+      <div class="carousel-dots">
+        <button class="carousel-dot active" data-i="0" aria-label="Slide 1"></button>
+        <button class="carousel-dot" data-i="1" aria-label="Slide 2"></button>
+        <button class="carousel-dot" data-i="2" aria-label="Slide 3"></button>
+        <button class="carousel-dot" data-i="3" aria-label="Slide 4"></button>
+        <button class="carousel-dot" data-i="4" aria-label="Slide 5"></button>
+      </div>
+      <div class="carousel-buttons">
+        <button class="carousel-btn carousel-prev" aria-label="Previous">←</button>
+        <button class="carousel-btn carousel-next" aria-label="Next">→</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT -->
+<section class="impact-section cs-section">
+  <div class="section-num reveal" style="justify-content:center">04 — Impact</div>
+  <h2 class="impact-heading reveal reveal-delay-1">Results that <span>moved the needle</span></h2>
+  <div class="impact-stats">
+    <div class="stat reveal">
+      <span class="stat-num">40%</span>
+      <span class="stat-label">Reduction in time-on-task</span>
+    </div>
+    <div class="stat reveal reveal-delay-1">
+      <span class="stat-num">6K+</span>
+      <span class="stat-label">Daily active users</span>
+    </div>
+    <div class="stat reveal reveal-delay-2">
+      <span class="stat-num">4</span>
+      <span class="stat-label">Teams on shared design system</span>
+    </div>
+  </div>
+</section>
+
+<!-- NEXT PROJECT -->
+<section class="next-section">
+  <a href="meta-mbs.html" class="next-card">
+    <div>
+      <div class="next-pre">Next Project</div>
+      <div class="next-title" id="nextTitle">Meta Business Suite</div>
+    </div>
+    <div class="next-arrow">→</div>
+  </a>
+</section>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image preview">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Close">✕</button>
+  <img id="lightboxImg" alt=""/>
+  <div class="lightbox-caption" id="lightboxCaption"></div>
+</div>
+
+<script>
+// LIGHTBOX
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightboxImg');
+const lightboxCaption = document.getElementById('lightboxCaption');
+const lightboxClose = document.getElementById('lightboxClose');
+
+function openLightbox(src, alt) {
+  lightboxImg.src = src;
+  lightboxImg.alt = alt || '';
+  lightboxCaption.textContent = alt || '';
+  lightbox.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  lightbox.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.querySelectorAll('.slide-visual img, .impact-visual img, .market-scan-visual img, .screen-image, .blueprint-visual img').forEach(img => {
+  img.addEventListener('click', () => openLightbox(img.src, img.alt));
+});
+lightbox.addEventListener('click', e => {
+  if (e.target === lightbox || e.target === lightboxImg) closeLightbox();
+});
+lightboxClose.addEventListener('click', closeLightbox);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+// PROJECT DATA
+const projects = [
+  {
+    id: 'meta-crm',
+    title: 'Meta\nSales CRM',
+    eyebrow: 'Enterprise SaaS · Meta',
+    role: 'Senior Product Designer',
+    client: 'Meta',
+    clientLabel: 'Company',
+    year: '2023–2026',
+    scope: 'Enterprise SaaS',
+    problemStatement: 'Sales teams drowning in <span>fragmented</span> tooling',
+    problemBody: 'Meta\'s global sales organization relied on a patchwork of legacy tools, spreadsheets, and workarounds to manage their pipeline. Context switching and data silos cost thousands of hours per quarter and introduced error into critical revenue processes.',
+    findings: [
+      { num: 'Research Finding 01', text: '<strong>73% of sales reps</strong> reported spending more than 2 hours daily on manual data entry — time that could be spent selling.' },
+      { num: 'Research Finding 02', text: 'Interviews across 5 global offices revealed <strong>11 distinct tool combinations</strong> for the same core workflow.' },
+      { num: 'Research Finding 03', text: 'Pipeline data inconsistency led to <strong>forecasting errors averaging 22%</strong>, undermining leadership confidence in sales data.' },
+    ],
+    solution: 'One unified platform. <em>Zero friction</em> between insight and action.',
+    solutionP1: 'We redesigned the core CRM experience from the ground up — consolidating workflows, surfacing contextual intelligence, and building a design system that could scale across Meta\'s global sales org.',
+    solutionP2: 'The new platform reduced tool switching entirely, brought pipeline visibility to every level of leadership, and shipped with an accessible, component-driven design system adopted across 4 internal teams.',
+    stats: [{ num:'40%', label:'Reduction in time-on-task' },{ num:'6K+', label:'Daily active users' },{ num:'4', label:'Teams on shared design system' }],
+    next: { id: 'meta-mbs', title: 'Meta Business Suite' },
+    nextIndex: '02 / 05'
+  },
+  {
+    id: 'meta-mbs',
+    title: 'Meta\nBusiness Suite',
+    eyebrow: 'SMB Platform · Meta',
+    role: 'Staff Product Designer',
+    client: 'Meta',
+    year: '2021–2022',
+    scope: 'SMB Marketing Platform',
+    problemStatement: 'Small businesses struggling to make sense of <span>complex ad tools</span>',
+    problemBody: 'Meta\'s marketing tools were built for sophisticated advertisers, leaving small and medium businesses overwhelmed by options, unclear on ROI, and under-supported in managing their ad spend effectively.',
+    findings: [
+      { num: 'Research Finding 01', text: '<strong>68% of SMB owners</strong> reported abandoning ad campaigns mid-setup due to complexity.' },
+      { num: 'Research Finding 02', text: 'Average session time to create a first campaign exceeded <strong>45 minutes</strong>, 3× the industry benchmark.' },
+      { num: 'Research Finding 03', text: 'Support tickets for billing and campaign errors represented <strong>58% of total SMB tickets</strong>.' },
+    ],
+    solution: 'Simple by design. <em>Powerful</em> by default.',
+    solutionP1: 'We rebuilt the SMB marketing experience around guided workflows, smart defaults, and progressive disclosure — so business owners could focus on their goals, not the tool.',
+    solutionP2: 'A simplified campaign creation flow, clearer performance dashboards, and contextual help reduced time-to-first-campaign by 60% and significantly increased SMB retention.',
+    stats: [{ num:'60%', label:'Faster time-to-campaign' },{ num:'2M+', label:'SMB users reached' },{ num:'↓58%', label:'Reduction in support tickets' }],
+    next: { id: 'fpl', title: 'Florida Power & Light' },
+    nextIndex: '03 / 05'
+  },
+  {
+    id: 'fpl',
+    title: 'Florida\nPower & Light',
+    eyebrow: 'Utilities · Customer Experience',
+    role: 'Lead Product Designer',
+    client: 'Florida Power & Light',
+    year: '2020–2021',
+    scope: 'Multi-project CX Design',
+    problemStatement: 'Customers disconnected from a utility <span>built for another era</span>',
+    problemBody: 'FPL\'s digital presence lagged far behind customer expectations set by modern apps. High call center volume, low self-service adoption, and a fragmented web experience were eroding customer trust and satisfaction scores.',
+    findings: [
+      { num: 'Research Finding 01', text: '<strong>Over 60% of calls</strong> to the customer service center were for tasks available — but hard to find — online.' },
+      { num: 'Research Finding 02', text: 'Usability testing revealed <strong>average task completion rates of 48%</strong> for key self-service flows.' },
+      { num: 'Research Finding 03', text: 'Net Promoter Scores consistently trailed industry peers by <strong>12–18 points</strong> on digital touchpoints.' },
+    ],
+    solution: 'Digital experiences that <em>earn trust</em> at every touchpoint.',
+    solutionP1: 'We led a multi-workstream redesign covering the account portal, outage center, and billing experience — grounded in extensive customer research across FPL\'s diverse Florida customer base.',
+    solutionP2: 'Streamlined self-service flows, a redesigned outage map, and a clearer billing summary drove significant improvements in task completion and reduced call center load.',
+    stats: [{ num:'+22pt', label:'NPS improvement' },{ num:'↓30%', label:'Call center reduction' },{ num:'78%', label:'Task completion rate' }],
+    next: { id: 'state-farm', title: 'State Farm' },
+    nextIndex: '04 / 05'
+  },
+  {
+    id: 'state-farm',
+    title: 'State\nFarm',
+    eyebrow: 'Insurance · Service Design',
+    role: 'Lead Designer & Strategist',
+    client: 'State Farm',
+    year: '2019–2020',
+    scope: 'Business Model Transformation',
+    problemStatement: 'An insurance giant ready to <span>reinvent itself</span>',
+    problemBody: 'State Farm recognized a fundamental shift in how customers expected to engage with insurance — moving from transactional product purchases to holistic, ongoing relationships. The challenge: transform a 100-year-old product company into a services organization.',
+    findings: [
+      { num: 'Research Finding 01', text: '<strong>82% of State Farm customers</strong> across 6 segments wanted proactive guidance, not just reactive claims support.' },
+      { num: 'Research Finding 02', text: 'Internal silos across 7 distinct business units were creating <strong>fragmented, contradictory</strong> customer experiences.' },
+      { num: 'Research Finding 03', text: 'Competitive analysis revealed <strong>insurtech disruptors</strong> capturing 3× growth in the under-35 customer segment.' },
+    ],
+    solution: 'From selling <em>products</em> to offering services for life.',
+    solutionP1: 'We drove a research-led strategic design engagement — conducting co-design sessions with leadership across State Farm\'s distinct business organizations to define a new service model and customer experience vision.',
+    solutionP2: 'The output: a holistic service blueprint, future-state journey maps, and a strategic roadmap for transforming how State Farm shows up across every customer touchpoint.',
+    stats: [{ num:'7', label:'Business units aligned' },{ num:'12mo', label:'Strategic roadmap defined' },{ num:'3×', label:'Customer journey coverage' }],
+    next: { id: 'texas-health', title: 'Texas Health' },
+    nextIndex: '05 / 05'
+  },
+  {
+    id: 'texas-health',
+    title: 'Texas\nHealth',
+    eyebrow: 'Healthcare · Service Design · Research',
+    role: 'Design Lead',
+    client: 'Texas Health Resources',
+    year: '2019–2022',
+    scope: 'Research, Strategy & Conceptual Design',
+    problemStatement: 'Delivering better <span>customer, patient, and employee</span> experiences',
+    problemBody: 'Texas Health Resources — one of the leading healthcare systems in the Dallas / Fort Worth area — set out to shift their business model to be more customer-centric. Their mission: better anticipate consumer needs and deliver affordable, personalized products and experiences across the system. As Design Lead, I partnered with Texas Health across multiple initiatives, focusing on two flagship projects: Patient Referral Navigation and Heart &amp; Vascular Strategic Operations.',
+    findings: [
+      { num: 'Project 01 · Referral Navigation', text: 'Texas Health was losing <strong>~$4M annually</strong> when physicians referred patients outside the THPG network. I led discovery to understand why — and what could be done to keep referrals in-system.' },
+      { num: 'Project 02 · Heart & Vascular', text: 'In a crowded DFW market, Texas Health wasn\'t the patient\'s first choice. I led research into the patient journey to uncover where new products and services could create lasting value.' },
+      { num: 'My Approach', text: 'Across both, I owned <strong>discovery, synthesis, and concept development</strong> — guiding designers, facilitating stakeholder workshops, and translating insight into actionable strategy.' },
+    ],
+    solution: 'From research to <em>roadmap</em> — defining the future of care, end to end.',
+    solutionP1: 'On Patient Referral Navigation, I led 43 interviews and 17 observations across physicians, navigators, and specialists — plus 10 months of survey analysis. I synthesized findings into four Future Experience themes (Establish Trust · Build T-shaped Navigators · Create Change from Within) and a journey map that stakeholders printed and hung in their offices as the clearest articulation they\'d seen of where the process broke.',
+    solutionP2: 'On Heart & Vascular, I conducted 7 physician and 15 patient interviews, plus market scans of 15+ industry innovations. I delivered an experience blueprint identifying opportunities across pre-, during-, and post-surgery — handed to leadership as a strategic foundation for new patient-facing products, services, and delivery platforms.',
+    stats: [{ num:'5', label:'Directional concepts delivered' },{ num:'60+', label:'Interviews & observations led' },{ num:'2', label:'Strategic roadmaps shipped' }],
+    next: { id: 'meta-crm', title: 'Meta Sales CRM' },
+    nextIndex: '01 / 05'
+  }
+];
+
+// LOAD PROJECT DATA
+const params = new URLSearchParams(window.location.search);
+const projectId = 'texas-health';
+const project = projects.find(p => p.id === projectId) || projects[0];
+const projectIndex = projects.indexOf(project) + 1;
+
+// Inject data
+document.getElementById('csTitle').innerHTML = project.title.replace('\n','<br>');
+document.getElementById('heroEyebrow').textContent = project.eyebrow;
+document.getElementById('metaRole').textContent = project.role;
+document.getElementById('metaClient').textContent = project.client;
+document.getElementById('metaClientLabel').textContent = project.clientLabel || 'Client';
+document.getElementById('metaYear').textContent = project.year;
+document.getElementById('metaScope').textContent = project.scope;
+document.getElementById('problemStatement').innerHTML = project.problemStatement;
+document.getElementById('problemBody').textContent = project.problemBody;
+document.querySelector('.solution-statement')?.replaceWith?.(document.createComment(''));
+document.title = `${project.client} — Charmant Tan`;
+
+// Insight cards
+const cards = document.querySelectorAll('.insight-card');
+project.findings.forEach((f, i) => {
+  if(cards[i]) {
+    cards[i].querySelector('.insight-num').textContent = f.num;
+    cards[i].querySelector('.insight-text').innerHTML = f.text;
+  }
+});
+
+// Stats
+const statEls = document.querySelectorAll('.stat');
+project.stats.forEach((s, i) => {
+  if(statEls[i]) {
+    statEls[i].querySelector('.stat-num').textContent = s.num;
+    statEls[i].querySelector('.stat-label').textContent = s.label;
+  }
+});
+
+// Next
+document.getElementById('nextTitle').textContent = project.next.title;
+document.querySelector('.next-card').href = `${project.next.id}.html`;
+document.getElementById('nav-index').textContent = `0${projectIndex} / 05`;
+
+// CURSOR
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx=-100,my=-100,rx=-100,ry=-100;
+document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+function animateCursor(){
+  cursor.style.left=mx+'px'; cursor.style.top=my+'px';
+  rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12;
+  ring.style.left=rx+'px'; ring.style.top=ry+'px';
+  requestAnimationFrame(animateCursor);
+}
+animateCursor();
+document.querySelectorAll('a,button,.next-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.body.classList.add('hovering'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('hovering'));
+});
+
+// NAV
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', ()=>{ nav.classList.toggle('scrolled', window.scrollY>60); }, {passive:true});
+
+// CAROUSELS (generic, works for any .screens-carousel)
+document.querySelectorAll('.screens-carousel').forEach(carousel => {
+  const track = carousel.querySelector('.carousel-track');
+  const slides = carousel.querySelectorAll('.carousel-slide');
+  const dots = carousel.querySelectorAll('.carousel-dot');
+  const idxEl = carousel.querySelector('.slide-idx, #slideIdx');
+  const prev = carousel.querySelector('.carousel-prev, #prevSlide');
+  const next = carousel.querySelector('.carousel-next, #nextSlide');
+  let cur = 0;
+  const total = slides.length;
+
+  function go(i) {
+    cur = Math.max(0, Math.min(total - 1, i));
+    track.style.transform = `translateX(-${cur * 100}%)`;
+    dots.forEach((d, idx) => d.classList.toggle('active', idx === cur));
+    if (idxEl) idxEl.textContent = String(cur + 1).padStart(2, '0');
+    if (prev) prev.disabled = cur === 0;
+    if (next) next.disabled = cur === total - 1;
+  }
+  if (prev) prev.addEventListener('click', () => go(cur - 1));
+  if (next) next.addEventListener('click', () => go(cur + 1));
+  dots.forEach(d => d.addEventListener('click', () => go(+d.dataset.i)));
+
+  let inView = false;
+  new IntersectionObserver(es => es.forEach(e => inView = e.isIntersecting), { threshold: 0.3 }).observe(carousel);
+  document.addEventListener('keydown', e => {
+    if (!inView) return;
+    if (e.key === 'ArrowLeft') go(cur - 1);
+    if (e.key === 'ArrowRight') go(cur + 1);
+  });
+
+  let touchX = null;
+  track.addEventListener('touchstart', e => touchX = e.touches[0].clientX, { passive: true });
+  track.addEventListener('touchend', e => {
+    if (touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 50) go(cur + (dx < 0 ? 1 : -1));
+    touchX = null;
+  });
+
+  go(0);
+});
+
+// PARALLAX
+const heroBg = document.getElementById('heroBg');
+const csTitle = document.getElementById('csTitle');
+const screenParallax = document.querySelectorAll('.screen-parallax');
+
+window.addEventListener('scroll', ()=>{
+  const y = window.scrollY;
+  if(heroBg) heroBg.style.transform = `translateY(${y*0.3}px)`;
+  if(csTitle) csTitle.style.transform = `translateY(${y*0.18}px)`;
+}, {passive:true});
+
+// SCROLL REVEAL
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); observer.unobserve(e.target); }});
+},{threshold:0.1});
+reveals.forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>
