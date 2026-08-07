@@ -354,6 +354,207 @@
   .blueprint-visual img:hover {
     filter: drop-shadow(0 28px 56px rgba(30,26,20,0.28));
   }
+
+  /* CAROUSEL DOTS (mobile only) */
+  .carousel-dots { display: none; gap: 8px; justify-content: center; margin-top: 20px; }
+  .carousel-dots button {
+    width: 7px; height: 7px; padding: 0; border-radius: 50%;
+    border: none; background: rgba(30,26,20,0.18);
+    cursor: pointer; transition: background 0.25s, transform 0.25s;
+  }
+  .carousel-dots button.active { background: var(--accent); transform: scale(1.35); }
+
+  /* ─── TOUCH DEVICES ─── */
+  @media (hover: none), (pointer: coarse) {
+    body, .next-card { cursor: auto; }
+    #cursor, #cursor-ring { display: none; }
+    .screen-image, .slide-visual img, .impact-visual img,
+    .market-scan-visual img, .blueprint-visual img { cursor: pointer; }
+  }
+
+  /* ─── TABLET ─── */
+  @media (max-width: 1024px) {
+    nav { padding: 22px 32px; }
+    nav.scrolled { padding: 15px 32px; }
+    .cs-hero { padding: 0 32px 64px; }
+    .hero-meta { gap: 32px; flex-wrap: wrap; }
+    .hero-scroll-hint { right: 32px; }
+    .problem-section { padding: 120px 32px; gap: 48px; }
+    .solution-section { padding: 120px 32px; }
+    .screens-header { padding: 0 32px; }
+    .impact-section { padding: 120px 32px; }
+    .impact-stats { gap: 48px 56px; }
+    .screen-info { padding: 64px 40px; }
+    .next-card { padding: 64px 32px; }
+  }
+
+  /* ─── MOBILE ─── */
+  @media (max-width: 768px) {
+    /* NAV */
+    nav { padding: 16px 20px; }
+    nav.scrolled { padding: 12px 20px; }
+    .nav-logo { font-size: 16px; }
+    .nav-right { gap: 16px; }
+    .nav-back { font-size: 11px; letter-spacing: 0.05em; gap: 6px; }
+    .nav-index { font-size: 11px; }
+
+    /* HERO — no fixed 700px floor, and no scroll hint colliding with the meta */
+    .cs-hero {
+      height: auto; min-height: 88svh;
+      padding: 108px 20px 56px;
+    }
+    /* Shorter hero puts the title over the busy photo — deepen the scrim */
+    .hero-overlay {
+      background: linear-gradient(to top,
+        var(--bg) 44%,
+        rgba(240,232,216,0.86) 68%,
+        rgba(240,232,216,0.35) 100%);
+    }
+    .hero-eyebrow { font-size: 10px; letter-spacing: 0.14em; margin-bottom: 16px; gap: 10px; }
+    .hero-eyebrow::before { width: 18px; }
+    .cs-title {
+      font-size: clamp(32px, 11vw, 64px);
+      line-height: 0.95; letter-spacing: -0.025em;
+      margin-bottom: 32px;
+      overflow-wrap: break-word;
+    }
+    /* Role / Company / Year / Scope stack instead of squeezing into one row */
+    .hero-meta { display: flex; flex-direction: column; gap: 16px; }
+    .meta-item { gap: 4px; }
+    .meta-label { font-size: 9px; letter-spacing: 0.14em; }
+    .meta-value { font-size: 14px; }
+    .hero-scroll-hint { display: none; }
+
+    /* SECTION COMMONS */
+    .section-num { font-size: 10px; letter-spacing: 0.12em; margin-bottom: 14px; gap: 10px; }
+    .section-num::before { width: 18px; }
+
+    /* PROBLEM — single column, findings become a swipeable carousel */
+    .problem-section {
+      grid-template-columns: 1fr;
+      padding: 88px 20px;
+      gap: 40px;
+      align-items: start;
+    }
+    /* Grid items default to min-width:auto; the carousel's min-content would
+       otherwise widen the track and push the whole column off-screen */
+    .problem-section > * { min-width: 0; }
+    .problem-left { position: static; }
+    .problem-statement {
+      font-size: clamp(28px, 8vw, 38px);
+      line-height: 1.12; letter-spacing: -0.02em;
+      margin-bottom: 20px;
+    }
+    .problem-body { font-size: 15px; line-height: 1.7; max-width: none; }
+
+    .problem-right {
+      flex-direction: row;
+      gap: 14px;
+      padding: 2px 20px 6px;
+      margin: 0 -20px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .problem-right::-webkit-scrollbar { display: none; }
+    .insight-card {
+      flex: 0 0 84%;
+      scroll-snap-align: center;
+      padding: 26px 22px;
+    }
+    /* Cards parked off-screen horizontally never trip the reveal observer */
+    .problem-right .reveal { opacity: 1; transform: none; transition: none; }
+    .insight-num { font-size: 9px; margin-bottom: 10px; }
+    .insight-text { font-size: 14px; line-height: 1.6; }
+    .carousel-dots { display: flex; }
+
+    /* SOLUTION */
+    .solution-section { padding: 88px 20px; }
+    .solution-statement {
+      font-size: clamp(28px, 8vw, 40px);
+      line-height: 1.08; letter-spacing: -0.02em;
+      margin-bottom: 32px;
+    }
+    .solution-body { grid-template-columns: 1fr; gap: 20px; }
+    .solution-body p { font-size: 15px; line-height: 1.7; }
+
+    /* SCREENS */
+    .screens-section { padding: 64px 0 88px; }
+    .screens-header { padding: 0 20px; margin-bottom: 48px; }
+    .screens-header h2 { font-size: clamp(28px, 8vw, 38px); margin-top: 12px; }
+
+    .screen-panel {
+      grid-template-columns: 1fr;
+      min-height: 0;
+      margin-bottom: 20px;
+    }
+    .screen-panel:nth-child(even),
+    .screen-panel:nth-child(even) > * { direction: ltr; }
+    .screen-info { padding: 40px 20px 32px; }
+    .screen-num { font-size: 10px; margin-bottom: 14px; }
+    .screen-title { font-size: clamp(24px, 6.5vw, 32px); margin-bottom: 14px; }
+    .screen-desc { font-size: 14px; line-height: 1.7; max-width: none; }
+
+    .screen-visual { min-height: 0; height: 82vw; max-height: 460px; }
+    /* Inline styles on these images crop hard at phone widths — contain instead */
+    .screen-visual .screen-image {
+      inset: 16px !important;
+      width: calc(100% - 32px) !important;
+      height: calc(100% - 52px) !important;
+      object-fit: contain !important;
+      object-position: center !important;
+    }
+    .screen-visual::after {
+      content: 'Tap to expand';
+      position: absolute; left: 0; right: 0; bottom: 12px;
+      text-align: center;
+      font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--fg-muted);
+      pointer-events: none;
+    }
+
+    /* IMPACT */
+    .impact-section { padding: 88px 20px; }
+    .impact-heading { font-size: clamp(30px, 8.5vw, 44px); line-height: 1.1; margin-bottom: 48px; }
+    .impact-stats {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 36px 20px;
+    }
+    .stat-num { font-size: clamp(36px, 11vw, 52px); }
+    .stat-label { font-size: 11px; letter-spacing: 0.07em; text-align: center; }
+
+    /* NEXT */
+    .next-card { padding: 56px 20px; gap: 20px; }
+    .next-pre { font-size: 10px; margin-bottom: 8px; }
+    .next-title { font-size: clamp(26px, 7vw, 38px); }
+    .next-arrow { font-size: 34px; flex-shrink: 0; }
+
+    /* LIGHTBOX */
+    .lightbox { padding: 56px 12px 56px; }
+    .lightbox-close { top: 12px; right: 12px; width: 38px; height: 38px; font-size: 15px; }
+    .lightbox-caption { bottom: 14px; font-size: 10px; max-width: 92%; }
+  }
+
+  /* ─── SMALL PHONES ─── */
+  @media (max-width: 380px) {
+    .cs-title { font-size: 34px; }
+    .insight-card { flex-basis: 88%; }
+    .impact-stats { grid-template-columns: 1fr; gap: 32px; }
+    .next-arrow { font-size: 28px; }
+  }
+
+  /* ─── REDUCED MOTION ─── */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+    .hero-eyebrow, .cs-title, .hero-meta, .hero-scroll-hint {
+      opacity: 1 !important; animation: none !important;
+    }
+    .scroll-bar { animation: none; }
+    .lightbox, .lightbox img, .next-arrow, .insight-card { transition: none; }
+  }
 </style>
 </head>
 <body>
@@ -402,7 +603,8 @@
       Meta's global sales organization relied on a patchwork of legacy tools, spreadsheets, and workarounds to manage their pipeline. Context switching and data silos cost thousands of hours per quarter and introduced error into critical revenue processes.
     </p>
   </div>
-  <div class="problem-right">
+  <div class="problem-findings">
+  <div class="problem-right" id="findingsTrack">
     <div class="insight-card reveal">
       <div class="insight-num">Research Finding 01</div>
       <p class="insight-text"><strong>71% of SMB admins</strong> couldn't locate the action they came to MBS to take within the first 30 seconds of landing on Home — even when the entry point existed somewhere in the suite.</p>
@@ -415,6 +617,8 @@
       <div class="insight-num">Research Finding 03</div>
       <p class="insight-text">Admins context-switched between FB, IG, and WhatsApp <strong>an average of 9 times per session</strong>, with no shared wayfinding or persistent context to ground them across apps.</p>
     </div>
+  </div>
+  <div class="carousel-dots" id="findingsDots" role="tablist" aria-label="Research findings"></div>
   </div>
 </section>
 
@@ -721,22 +925,55 @@ document.getElementById('nextTitle').textContent = project.next.title;
 document.querySelector('.next-card').href = `${project.next.id}.html`;
 document.getElementById('nav-index').textContent = `0${projectIndex} / 05`;
 
-// CURSOR
+// FINDINGS CAROUSEL (mobile) — dots track the horizontal scroller
+const findingsTrack = document.getElementById('findingsTrack');
+const findingsDots = document.getElementById('findingsDots');
+if (findingsTrack && findingsDots) {
+  const slides = [...findingsTrack.querySelectorAll('.insight-card')];
+  slides.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.setAttribute('aria-label', `Research finding ${i + 1}`);
+    dot.addEventListener('click', () => {
+      findingsTrack.scrollTo({ left: slides[i].offsetLeft - findingsTrack.offsetLeft, behavior: 'smooth' });
+    });
+    findingsDots.appendChild(dot);
+  });
+  const dots = [...findingsDots.children];
+  const syncDots = () => {
+    const center = findingsTrack.scrollLeft + findingsTrack.clientWidth / 2;
+    let active = 0, best = Infinity;
+    slides.forEach((s, i) => {
+      const d = Math.abs(s.offsetLeft - findingsTrack.offsetLeft + s.offsetWidth / 2 - center);
+      if (d < best) { best = d; active = i; }
+    });
+    dots.forEach((d, i) => d.classList.toggle('active', i === active));
+  };
+  syncDots();
+  findingsTrack.addEventListener('scroll', () => {
+    window.requestAnimationFrame(syncDots);
+  }, { passive: true });
+  window.addEventListener('resize', syncDots);
+}
+
+// CURSOR — pointer-based only; skip entirely on touch
+const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
 const cursor = document.getElementById('cursor');
 const ring = document.getElementById('cursor-ring');
-let mx=-100,my=-100,rx=-100,ry=-100;
-document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
-function animateCursor(){
-  cursor.style.left=mx+'px'; cursor.style.top=my+'px';
-  rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12;
-  ring.style.left=rx+'px'; ring.style.top=ry+'px';
-  requestAnimationFrame(animateCursor);
+if (!isTouch) {
+  let mx=-100,my=-100,rx=-100,ry=-100;
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+  (function animateCursor(){
+    cursor.style.left=mx+'px'; cursor.style.top=my+'px';
+    rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12;
+    ring.style.left=rx+'px'; ring.style.top=ry+'px';
+    requestAnimationFrame(animateCursor);
+  })();
+  document.querySelectorAll('a,button,.next-card').forEach(el=>{
+    el.addEventListener('mouseenter',()=>document.body.classList.add('hovering'));
+    el.addEventListener('mouseleave',()=>document.body.classList.remove('hovering'));
+  });
 }
-animateCursor();
-document.querySelectorAll('a,button,.next-card').forEach(el=>{
-  el.addEventListener('mouseenter',()=>document.body.classList.add('hovering'));
-  el.addEventListener('mouseleave',()=>document.body.classList.remove('hovering'));
-});
 
 // NAV
 const nav = document.getElementById('nav');
@@ -747,7 +984,14 @@ const heroBg = document.getElementById('heroBg');
 const csTitle = document.getElementById('csTitle');
 const screenParallax = document.querySelectorAll('.screen-parallax');
 
+// Parallax offsets overflow small screens and cost frames on mobile — skip below 768px
+const parallaxQuery = window.matchMedia('(min-width: 769px)');
 window.addEventListener('scroll', ()=>{
+  if(!parallaxQuery.matches){
+    if(heroBg) heroBg.style.transform = '';
+    if(csTitle) csTitle.style.transform = '';
+    return;
+  }
   const y = window.scrollY;
   if(heroBg) heroBg.style.transform = `translateY(${y*0.3}px)`;
   if(csTitle) csTitle.style.transform = `translateY(${y*0.18}px)`;

@@ -229,6 +229,151 @@
   .reveal-delay-1 { transition-delay:0.1s; }
   .reveal-delay-2 { transition-delay:0.2s; }
   .reveal-delay-3 { transition-delay:0.3s; }
+  /* ─── FINDINGS CAROUSEL DOTS (mobile) ─── */
+  .findings-dots { display: none; gap: 8px; justify-content: center; }
+  .findings-dots button {
+    width: 7px; height: 7px; padding: 0; border-radius: 50%;
+    border: none; background: rgba(30,26,20,0.18);
+    cursor: pointer; transition: background .25s, transform .25s;
+  }
+  .findings-dots button.active { background: var(--accent); transform: scale(1.35); }
+
+  /* ─── TOUCH DEVICES ─── */
+  @media (hover: none), (pointer: coarse) {
+    body, .next-card { cursor: auto; }
+    #cursor, #cursor-ring { display: none; }
+  }
+
+  /* ─── TABLET ─── */
+  @media (max-width: 1024px) {
+    nav { padding: 22px 32px; }
+    nav.scrolled { padding: 15px 32px; }
+    .cs-hero { padding: 0 32px 64px; }
+    .hero-meta { gap: 32px; flex-wrap: wrap; }
+    .hero-scroll-hint { right: 32px; }
+    .screens-header { padding: 0 32px; }
+    .impact-section { padding: 120px 32px; }
+    .next-card { padding: 64px 32px; }
+  }
+
+  /* ─── MOBILE ─── */
+  @media (max-width: 768px) {
+    /* NAV */
+    nav { padding: 16px 20px; }
+    nav.scrolled { padding: 12px 20px; }
+    .nav-logo { font-size: 16px; }
+    .nav-right { gap: 16px; }
+    .nav-back { font-size: 11px; letter-spacing: 0.05em; gap: 6px; }
+    .nav-index { font-size: 11px; }
+
+    /* HERO — no fixed px floor, and no scroll hint colliding with the meta */
+    .cs-hero { height: auto; min-height: 88svh; padding: 108px 20px 56px; }
+    .hero-overlay {
+      background: linear-gradient(to top,
+        var(--bg) 44%,
+        rgba(240,232,216,0.86) 68%,
+        rgba(240,232,216,0.35) 100%);
+    }
+    .hero-eyebrow { font-size: 10px; letter-spacing: 0.14em; margin-bottom: 16px; gap: 10px; }
+    .hero-eyebrow::before { width: 18px; }
+    .cs-title {
+      font-size: clamp(32px, 11vw, 64px);
+      line-height: 0.95; letter-spacing: -0.025em;
+      margin-bottom: 32px; overflow-wrap: break-word;
+    }
+    /* Role / Client / Year / Scope stack instead of squeezing into one row */
+    .hero-meta { display: flex; flex-direction: column; gap: 16px; }
+    .meta-item { gap: 4px; }
+    .meta-label { font-size: 9px; letter-spacing: 0.14em; }
+    .meta-value { font-size: 14px; }
+    .hero-scroll-hint { display: none; }
+
+    .section-num { font-size: 10px; letter-spacing: 0.12em; margin-bottom: 14px; gap: 10px; }
+    .section-num::before { width: 18px; }
+
+    /* PROBLEM — single column, findings become a swipeable carousel */
+    .problem-section { grid-template-columns: 1fr; padding: 88px 20px; gap: 40px; align-items: start; }
+    /* Grid items default to min-width:auto; the carousel's min-content would
+       otherwise widen the track and push the whole column off-screen */
+    .problem-section > * { min-width: 0; }
+    .problem-left { position: static; }
+    .problem-statement { font-size: clamp(28px, 8vw, 38px); line-height: 1.12; letter-spacing: -0.02em; margin-bottom: 20px; }
+    .problem-body { font-size: 15px; line-height: 1.7; max-width: none; }
+
+    .problem-right {
+      flex-direction: row; gap: 14px;
+      padding: 2px 20px 6px; margin: 0 -20px;
+      overflow-x: auto; scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none; -ms-overflow-style: none;
+    }
+    .problem-right::-webkit-scrollbar { display: none; }
+    .insight-card { flex: 0 0 84%; scroll-snap-align: center; padding: 26px 22px; }
+    /* Cards parked off-screen horizontally never trip the reveal observer */
+    .problem-right .reveal { opacity: 1; transform: none; transition: none; }
+    .insight-num { font-size: 9px; margin-bottom: 10px; }
+    .insight-text { font-size: 14px; line-height: 1.6; }
+    .findings-dots { display: flex; margin-top: -22px; }
+
+    /* RESEARCH STATS */
+    .research-stats { grid-template-columns: 1fr; margin-bottom: 56px; }
+    .research-stat { padding: 32px 20px; border-right: none; border-bottom: 1px solid var(--border); }
+    .research-stat:last-child { border-bottom: none; }
+    .rs-num { font-size: clamp(34px, 10vw, 48px); }
+    .rs-label { font-size: 12px; }
+
+    /* SCREENS CAROUSEL */
+    .screens-section { padding-bottom: 88px; }
+    .screens-header { padding: 0 20px; }
+    .screens-header h2 { font-size: clamp(28px, 8vw, 38px); }
+    .screens-intro { font-size: 15px; margin-top: 20px; }
+    .carousel-slide { padding: 36px 20px 40px; gap: 22px; min-height: 0; }
+    .slide-caption .screen-title { font-size: clamp(24px, 6.5vw, 32px); }
+    .slide-caption .screen-desc { font-size: 14px; line-height: 1.7; }
+    .slide-visual { min-height: 0; }
+    .slide-visual img { max-height: 46vh; }
+    .carousel-controls { padding: 24px 20px 0; flex-wrap: wrap; gap: 16px; }
+    .carousel-count { font-size: 12px; }
+    .carousel-dot { width: 20px; }
+    .carousel-dot.active { width: 40px; }
+    .carousel-btn { width: 44px; height: 44px; font-size: 16px; }
+
+    /* IMPACT */
+    .impact-section { padding: 88px 20px; }
+    .impact-heading { font-size: clamp(30px, 8.5vw, 44px); line-height: 1.1; margin-bottom: 48px; }
+    .impact-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 36px 20px; margin-bottom: 48px; }
+    .stat-num { font-size: clamp(36px, 11vw, 52px); }
+    .stat-label { font-size: 11px; letter-spacing: 0.07em; text-align: center; }
+
+    /* NEXT */
+    .next-card { padding: 56px 20px; gap: 20px; }
+    .next-pre { font-size: 10px; margin-bottom: 8px; }
+    .next-title { font-size: clamp(26px, 7vw, 38px); }
+    .next-arrow { font-size: 34px; flex-shrink: 0; }
+
+    /* LIGHTBOX */
+    .lightbox { padding: 56px 12px; }
+    .lightbox-close { top: 12px; right: 12px; width: 38px; height: 38px; font-size: 15px; }
+    .lightbox-caption { bottom: 14px; font-size: 10px; max-width: 92%; }
+  }
+
+  /* ─── SMALL PHONES ─── */
+  @media (max-width: 380px) {
+    .cs-title { font-size: 34px; }
+    .insight-card { flex-basis: 88%; }
+    .impact-stats { grid-template-columns: 1fr; gap: 32px; }
+    .next-arrow { font-size: 28px; }
+  }
+
+  /* ─── REDUCED MOTION ─── */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+    .hero-eyebrow, .cs-title, .hero-meta, .hero-scroll-hint {
+      opacity: 1 !important; animation: none !important;
+    }
+    .scroll-bar { animation: none; }
+  }
 </style>
 </head>
 <body>
@@ -531,6 +676,68 @@ const observer = new IntersectionObserver(entries=>{
   entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); observer.unobserve(e.target); }});
 },{threshold:0.1});
 reveals.forEach(el=>observer.observe(el));
+</script>
+<script>
+/* ─── MOBILE BEHAVIOUR ─────────────────────────────────────────────
+   Kept separate from the page script so it layers on without touching it. */
+
+// Custom cursor is meaningless on touch — drop it so nothing tracks a phantom pointer.
+if (window.matchMedia('(hover: none), (pointer: coarse)').matches) {
+  document.getElementById('cursor')?.remove();
+  document.getElementById('cursor-ring')?.remove();
+}
+
+// Hero parallax pushes the title past the viewport on narrow screens.
+(function () {
+  const mq = window.matchMedia('(max-width: 768px)');
+  const clear = () => {
+    if (!mq.matches) return;
+    ['heroBg', 'csTitle'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.transform = '';
+    });
+  };
+  window.addEventListener('scroll', clear, { passive: true });
+  mq.addEventListener('change', clear);
+  clear();
+})();
+
+// Research findings become a swipeable carousel on mobile — give it dots.
+(function () {
+  const track = document.querySelector('.problem-right');
+  if (!track || track.hidden) return;
+  const slides = [...track.querySelectorAll('.insight-card')];
+  if (slides.length < 2) return;
+
+  const dots = document.createElement('div');
+  dots.className = 'findings-dots';
+  dots.setAttribute('role', 'tablist');
+  dots.setAttribute('aria-label', 'Research findings');
+  slides.forEach((slide, i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', `Research finding ${i + 1}`);
+    b.addEventListener('click', () => {
+      track.scrollTo({ left: slide.offsetLeft - track.offsetLeft, behavior: 'smooth' });
+    });
+    dots.appendChild(b);
+  });
+  track.after(dots);
+
+  const btns = [...dots.children];
+  const sync = () => {
+    const center = track.scrollLeft + track.clientWidth / 2;
+    let active = 0, best = Infinity;
+    slides.forEach((s, i) => {
+      const d = Math.abs(s.offsetLeft - track.offsetLeft + s.offsetWidth / 2 - center);
+      if (d < best) { best = d; active = i; }
+    });
+    btns.forEach((b, i) => b.classList.toggle('active', i === active));
+  };
+  sync();
+  track.addEventListener('scroll', () => requestAnimationFrame(sync), { passive: true });
+  window.addEventListener('resize', sync);
+})();
 </script>
 </body>
 </html>
