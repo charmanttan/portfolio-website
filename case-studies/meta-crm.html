@@ -536,6 +536,33 @@
     .insight-num { font-size: 9px; margin-bottom: 10px; }
     .insight-text { font-size: 14px; line-height: 1.6; }
 
+    /* NDA NOTICE — the main body of this page, so it carries the mobile work.
+       Its own 880px block only reaches 28px gutters; match the 20px used
+       everywhere else and pull the display type down to a phone scale. */
+    .nda-section { padding: 72px 20px; }
+    .nda-grid { gap: 36px; }
+    .nda-eyebrow { font-size: 10px; letter-spacing: 0.14em; margin-bottom: 18px; gap: 10px; }
+    .nda-eyebrow::before { width: 18px; }
+    .nda-lock { width: 44px; height: 44px; border-radius: 12px; margin-bottom: 24px; }
+    .nda-lock svg { width: 20px; height: 20px; }
+    .nda-title {
+      font-size: clamp(28px, 8vw, 40px);
+      line-height: 1.05; letter-spacing: -0.025em;
+      margin-bottom: 20px;
+    }
+    .nda-lede { font-size: 15px; line-height: 1.7; max-width: none; margin-bottom: 28px; }
+    .nda-detail-item { padding: 16px 0; }
+    .nda-detail-label { font-size: 9px; letter-spacing: 0.14em; }
+    .nda-detail-value { font-size: 14px; line-height: 1.6; }
+    .nda-detail-list { margin-bottom: 32px; }
+    /* Side-by-side pills get cramped and hard to tap — stack them full width */
+    .nda-cta-row { flex-direction: column; gap: 10px; flex-wrap: nowrap; }
+    .nda-btn-primary, .nda-btn-outline {
+      justify-content: center;
+      padding: 16px 18px;
+      font-size: 11px; letter-spacing: 0.08em;
+    }
+
     /* SOLUTION */
     .solution-section { padding: 88px 20px; }
     .solution-statement { font-size: clamp(28px, 8vw, 40px); line-height: 1.08; letter-spacing: -0.02em; margin-bottom: 32px; }
@@ -577,6 +604,7 @@
   /* ─── SMALL PHONES ─── */
   @media (max-width: 380px) {
     .cs-title { font-size: 34px; }
+    .nda-title { font-size: 28px; }
     .impact-stats { grid-template-columns: 1fr; gap: 32px; }
     .next-arrow { font-size: 28px; }
   }
@@ -589,6 +617,7 @@
       opacity: 1 !important; animation: none !important;
     }
     .scroll-bar { animation: none; }
+    .nda-lock::after { animation: none; }
   }
 </style>
 </head>
